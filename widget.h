@@ -14,6 +14,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
+
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
@@ -21,10 +22,14 @@ private slots:
 
     void on_dir_content_doubleClicked(const QModelIndex &index);
 
+    void on_back_clicked();
+
+    void on_forward_clicked();
+
 private:
     Ui::Widget* ui;
     QFileSystemModel* file_system;
-    std::thread debug_thread_;
 
 };
+
 #endif // WIDGET_H
