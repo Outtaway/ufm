@@ -1,7 +1,8 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <thread>
+#include <memory>
+
 #include <QWidget>
 #include <QFileSystemModel>
 
@@ -27,8 +28,9 @@ private slots:
     void on_forward_clicked();
 
 private:
-    Ui::Widget* ui;
-    QFileSystemModel* file_system;
+
+    std::unique_ptr<Ui::Widget>         ui;
+    std::unique_ptr<QFileSystemModel>   file_system;
 
 };
 

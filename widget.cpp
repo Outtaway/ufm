@@ -6,20 +6,19 @@
 using namespace std::literals;
 
 Widget::Widget(QWidget* parent) :
-    QWidget(parent),
-    ui(new Ui::Widget)
+    QWidget(parent)
 {
+    ui = std::make_unique<Ui::Widget>();
     ui->setupUi(this);
 
-    file_system = new QFileSystemModel(this);
-    ui->dir_content->setModel(file_system);
+    file_system = std::make_unique<QFileSystemModel>(this);
+    ui->dir_content->setModel(file_system.get());
     ui->dir_content->setRootIndex(file_system->setRootPath(""));
 
 }
 
 Widget::~Widget()
 {
-    delete ui;
 }
 
 void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
