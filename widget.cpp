@@ -13,11 +13,7 @@ Widget::Widget(QWidget *parent) :
 
     file_system = new QFileSystemModel(this);
     ui->dir_content->setModel(file_system);
-    ui->dir_content->setRootIndex(file_system->setRootPath(":/"));
-    ui->dir_content->hideColumn(1);
-    ui->dir_content->hideColumn(2);
-    ui->dir_content->hideColumn(3);
-    ui->dir_content->setHeaderHidden(true);
+    ui->dir_content->setRootIndex(file_system->setRootPath(""));
 
 }
 
@@ -26,3 +22,16 @@ Widget::~Widget()
     delete ui;
 }
 
+void Widget::on_dir_content_doubleClicked(const QModelIndex &index)
+{
+    auto entity_info = file_system->fileInfo(index);
+
+    if (entity_info.isDir())
+    {
+        ui->path_line->setText(entity_info.path());
+    }
+    else
+    {
+        qDebug() << entity_info.path() << " is not a directory";
+    }
+}

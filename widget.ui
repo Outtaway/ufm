@@ -180,7 +180,7 @@
        <string notr="true">border: 1px solid #F0F0F0;</string>
       </property>
      </widget>
-     <widget class="QTreeView" name="dir_content">
+     <widget class="QListView" name="dir_content">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>

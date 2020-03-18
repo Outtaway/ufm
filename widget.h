@@ -19,6 +19,8 @@ public:
 
 private slots:
 
+    void on_dir_content_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::Widget* ui;
     QFileSystemModel* file_system;
