@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include <QFileSystemModel>
+#include <QItemSelection>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -20,6 +21,8 @@ public:
     ~Widget();
 
 private slots:
+
+    void dir_selection_changed(const QItemSelection& prev, const QItemSelection& next);
 
     void on_dir_content_doubleClicked(const QModelIndex &index);
 

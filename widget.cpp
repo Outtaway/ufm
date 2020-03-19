@@ -15,10 +15,25 @@ Widget::Widget(QWidget* parent) :
     ui->dir_content->setModel(file_system.get());
     ui->dir_content->setRootIndex(file_system->setRootPath(""));
 
+    QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
+                     this, &Widget::dir_selection_changed);
+
 }
 
 Widget::~Widget()
 {
+}
+
+void Widget::dir_selection_changed(const QItemSelection& selected, const QItemSelection&)
+{
+    if (!selected.indexes().empty())
+    {
+        ui->forward->setEnabled(true);
+    }
+    else
+    {
+        ui->forward->setEnabled(false);
+    }
 }
 
 void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
@@ -45,6 +60,8 @@ void Widget::on_back_clicked()
 
     ui->dir_content->setRootIndex(parent_dir_index);
     ui->path_line->setText(parent_dir_info.absoluteFilePath());
+
+    // clear selection
     ui->dir_content->setCurrentIndex(QModelIndex());
 }
 
@@ -64,5 +81,6 @@ void Widget::on_forward_clicked()
         }
     }
 
+     // clear selection
     ui->dir_content->setCurrentIndex(QModelIndex());
 }
