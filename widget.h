@@ -32,7 +32,7 @@ private slots:
 
 private:
 
-    std::unique_ptr<Ui::Widget>         ui;
+    Ui::Widget*                         ui;
     std::unique_ptr<QFileSystemModel>   file_system;
 
 };

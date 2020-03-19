@@ -8,7 +8,7 @@ using namespace std::literals;
 Widget::Widget(QWidget* parent) :
     QWidget(parent)
 {
-    ui = std::make_unique<Ui::Widget>();
+    ui = new Ui::Widget;
     ui->setupUi(this);
 
     file_system = std::make_unique<QFileSystemModel>(this);
