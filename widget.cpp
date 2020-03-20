@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <chrono>
 #include <iostream>
+#include <QDesktopServices>
+#include <QUrl>
 
 using namespace std::literals;
 
@@ -57,7 +59,7 @@ void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
     }
     else
     {
-        qDebug() << file_name<< " is not a directory";
+        QDesktopServices::openUrl(QUrl::fromLocalFile(file_system->filePath(index)));
     }
 
     // clear selection
