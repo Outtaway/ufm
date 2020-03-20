@@ -34,7 +34,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMaximumSize</enum>
@@ -62,7 +62,7 @@
          <property name="styleSheet">
           <string notr="true">QPushButton:hover
 {
-  border: 1px solid #E0E0E0;
+  border: 1px solid #D3D3D3;
 }</string>
          </property>
          <property name="text">
@@ -107,7 +107,7 @@
          <property name="styleSheet">
           <string notr="true">QPushButton:hover
 {
-  border: 1px solid #E0E0E0;
+  border: 1px solid #D3D3D3;
 }</string>
          </property>
          <property name="text">
@@ -134,11 +134,11 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>25</height>
+           <height>23</height>
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">border: 1px solid #F0F0F0;</string>
+          <string notr="true">border: 1px solid #D3D3D3;</string>
          </property>
          <property name="flow">
           <enum>QListView::LeftToRight</enum>
@@ -183,7 +183,7 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">border: 1px solid #F0F0F0;</string>
+       <string notr="true">border: 1px solid #D3D3D3;</string>
       </property>
      </widget>
      <widget class="QListView" name="dir_content">
@@ -194,7 +194,7 @@
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">border: 1px solid #F0F0F0;</string>
+       <string notr="true">border: 1px solid #D3D3D3;</string>
       </property>
      </widget>
     </widget>
