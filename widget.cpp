@@ -15,6 +15,12 @@ Widget::Widget(QWidget* parent) :
     file_system = std::make_unique<QFileSystemModel>(this);
     ui->dir_content->setModel(file_system.get());
     ui->dir_content->setRootIndex(file_system->setRootPath(""));
+    ui->dir_content->setItemsExpandable(false);
+
+    // hide size, type, date modified,
+    ui->dir_content->hideColumn(1);
+    ui->dir_content->hideColumn(2);
+    ui->dir_content->hideColumn(3);
 
     QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
                      this, &Widget::dir_selection_changed);
