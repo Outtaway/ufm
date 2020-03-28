@@ -14,19 +14,8 @@ Widget::Widget(QWidget* parent) :
     ui = new Ui::Widget;
     ui->setupUi(this);
 
-    file_system = std::make_unique<QFileSystemModel>(this);
-    ui->dir_content->setModel(file_system.get());
-    ui->dir_content->setRootIndex(file_system->setRootPath(""));
-    ui->dir_content->setItemsExpandable(false);
-
-    // hide size, type, date modified,
-    ui->dir_content->hideColumn(1);
-    ui->dir_content->hideColumn(2);
-    ui->dir_content->hideColumn(3);
-
-    QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
-                     this, &Widget::dir_selection_changed);
-
+    setUpQuickAccessPanel();
+    setUpDirContentPanel();
 }
 
 Widget::~Widget()
@@ -124,4 +113,86 @@ void Widget::on_path_line_itemClicked(QListWidgetItem*)
     }
 
     ui->path_line->clearSelection();
+}
+
+void Widget::setUpQuickAccessPanel()
+{
+    QTreeWidgetItem* quick_access = addCategory(ui->quick_panel, "Quick access");
+    setUpQuickAccess(quick_access);
+
+    QTreeWidgetItem* recent = addCategory(ui->quick_panel, "Recent");
+    setUpRecent(recent);
+
+    quick_access->setExpanded(true);
+    recent->setExpanded(true);
+}
+
+void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
+{
+    if (auto it = standart_locations.find(item->text(column)); it != standart_locations.end())
+    {
+        qDebug() << it->second;
+    }
+}
+
+QTreeWidgetItem* Widget::addCategory(QTreeWidget* parent, QString name)
+{
+    QTreeWidgetItem* new_category = new QTreeWidgetItem(parent);
+    new_category->setText(0, std::move(name));
+    ui->quick_panel->addTopLevelItem(new_category);
+
+    return new_category;
+}
+
+QTreeWidgetItem* Widget::addChild(QTreeWidgetItem* parent, QString name)
+{
+    QTreeWidgetItem* new_category = new QTreeWidgetItem(parent);
+    new_category->setText(0, std::move(name));
+
+    return new_category;
+}
+
+void Widget::setUpQuickAccess(QTreeWidgetItem* quick_access)
+{
+    std::map<QString, QStringList> standart_dirs;
+
+    standart_dirs.insert({ DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation) });
+    standart_dirs.insert({ DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation) });
+    standart_dirs.insert({ DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation) });
+    standart_dirs.insert({ MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation) });
+    standart_dirs.insert({ PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation) });
+    standart_dirs.insert({ MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation) });
+
+    std::for_each(standart_dirs.begin(), standart_dirs.end(), [this, quick_access](const auto& entity)
+    {
+        if (!entity.second.empty())
+        {
+            standart_locations.insert({ entity.first, entity.second.last() });
+            addChild(quick_access, entity.first);
+        }
+    });
+}
+
+void Widget::setUpRecent(QTreeWidgetItem* recent)
+{
+
+}
+
+void Widget::setUpDirContentPanel()
+{
+    file_system = std::make_unique<QFileSystemModel>(this);
+    ui->dir_content->setModel(file_system.get());
+    ui->dir_content->setRootIndex(file_system->setRootPath(""));
+    ui->dir_content->setItemsExpandable(false);
+
+    // hide size, type, date modified,
+    ui->dir_content->hideColumn(1);
+    ui->dir_content->hideColumn(2);
+    ui->dir_content->hideColumn(3);
+
+    QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
+                     this, &Widget::dir_selection_changed);
+
+    ui->dir_content->header()->setStyleSheet(QString::fromUtf8("border: 1px solid #FFFFFF;"
+                                                               "border-bottom: 1px solid #D3D3D3"));
 }
