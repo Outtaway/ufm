@@ -184,7 +184,7 @@
       </property>
       <property name="styleSheet">
        <string notr="true">border: 1px solid #D3D3D3;
-padding: 5px;</string>
+QTreeView::item{ margin: 0px 6px 6px 6px; border: 0;}</string>
       </property>
       <property name="headerHidden">
        <bool>true</bool>

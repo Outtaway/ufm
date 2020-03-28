@@ -129,10 +129,21 @@ void Widget::setUpQuickAccessPanel()
 
 void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
 {
-    if (auto it = standart_locations.find(item->text(column)); it != standart_locations.end())
+    QString standart_path = standart_locations[item->text(column)];
+
+    QModelIndex path_index = file_system->index(standart_path);
+
+    ui->dir_content->setRootIndex(path_index);
+
+    path.clear();
+    ui->path_line->clear();
+    while (path_index.isValid())
     {
-        qDebug() << it->second;
+        path.push_front(path_index);
+        ui->path_line->insertItem(0, path_line_prefix + file_system->fileName(path_index));
+        path_index = path_index.parent();
     }
+
 }
 
 QTreeWidgetItem* Widget::addCategory(QTreeWidget* parent, QString name)
