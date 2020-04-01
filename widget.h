@@ -10,6 +10,8 @@
 #include <QItemSelection>
 #include <QListWidget>
 #include <QTreeWidget>
+#include <QtSql>
+#include <QSqlQuery>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -51,6 +53,7 @@ private:
     const QString                       path_line_prefix = " 🠚 ";
 
     // quick panel related
+    const char* const QUICK_ACCESS_SECTION_NAME = "Quick access";
     const char* const DESKTOP = "Desktop";
     const char* const DOCUMENTS = "Documents";
     const char* const DOWNLOADS = "Downloads";
@@ -62,6 +65,18 @@ private:
     void setUpQuickAccess(QTreeWidgetItem* quick_access);
     void setUpRecent(QTreeWidgetItem* recent);
     std::map<QString, QString>          standart_locations;
+
+    // recent panel related
+    enum RECENT_TABLE_COLUMNS
+    {
+        NAME = 0,
+        PATH
+    };
+
+    const char* const RECENT_SECTION_NAME = "Recent";
+    const char* const RECENT_DB_NAME = "recent.db";
+    QSqlDatabase db;
+    std::map<QString, QString>          recent_locations;
 };
 
 #endif // WIDGET_H

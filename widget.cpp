@@ -117,10 +117,10 @@ void Widget::on_path_line_itemClicked(QListWidgetItem*)
 
 void Widget::setUpQuickAccessPanel()
 {
-    QTreeWidgetItem* quick_access = addCategory(ui->quick_panel, "Quick access");
+    QTreeWidgetItem* quick_access = addCategory(ui->quick_panel, QUICK_ACCESS_SECTION_NAME);
     setUpQuickAccess(quick_access);
 
-    QTreeWidgetItem* recent = addCategory(ui->quick_panel, "Recent");
+    QTreeWidgetItem* recent = addCategory(ui->quick_panel, RECENT_SECTION_NAME);
     setUpRecent(recent);
 
     quick_access->setExpanded(true);
@@ -129,19 +129,39 @@ void Widget::setUpQuickAccessPanel()
 
 void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
 {
-    QString standart_path = standart_locations[item->text(column)];
+    QTreeWidgetItem* parent = item->parent();
 
-    QModelIndex path_index = file_system->index(standart_path);
+    if (!parent)
+    {
+        return;
+    }
 
-    ui->dir_content->setRootIndex(path_index);
+    QString new_path;
+
+    if (parent->text(0) == QUICK_ACCESS_SECTION_NAME)
+    {
+        new_path = standart_locations[item->text(column)];
+    }
+    else if (parent->text(0) == RECENT_SECTION_NAME)
+    {
+        new_path = recent_locations[item->text(column)];
+    }
+    else
+    {
+        return;
+    }
+
+    QModelIndex new_path_index = file_system->index(new_path);
+
+    ui->dir_content->setRootIndex(new_path_index);
 
     path.clear();
     ui->path_line->clear();
-    while (path_index.isValid())
+    while (new_path_index.isValid())
     {
-        path.push_front(path_index);
-        ui->path_line->insertItem(0, path_line_prefix + file_system->fileName(path_index));
-        path_index = path_index.parent();
+        path.push_front(new_path_index);
+        ui->path_line->insertItem(0, path_line_prefix + file_system->fileName(new_path_index));
+        new_path_index = new_path_index.parent();
     }
 
 }
@@ -174,19 +194,56 @@ void Widget::setUpQuickAccess(QTreeWidgetItem* quick_access)
     standart_dirs.insert({ PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation) });
     standart_dirs.insert({ MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation) });
 
-    std::for_each(standart_dirs.begin(), standart_dirs.end(), [this, quick_access](const auto& entity)
+    // fill internal data structure
+    for (auto& standart_dir : standart_dirs)
     {
-        if (!entity.second.empty())
+        if (!standart_dir.second.empty())
         {
-            standart_locations.insert({ entity.first, entity.second.last() });
-            addChild(quick_access, entity.first);
+            standart_locations.emplace(standart_dir.first, standart_dir.second.last());
         }
-    });
+    }
+
+    // update ui
+    for (const auto& standart_location : standart_locations)
+    {
+        addChild(quick_access, standart_location.first);
+    }
 }
 
 void Widget::setUpRecent(QTreeWidgetItem* recent)
 {
+    db = QSqlDatabase::addDatabase("QSQLITE");
 
+    db.setDatabaseName(RECENT_DB_NAME);
+
+    if (!db.open())
+    {
+        qDebug() << "Database was not opened: " << RECENT_DB_NAME << ", reason: " << db.lastError().text();
+        return;
+    }
+
+    QSqlQuery query(db);
+    QString query_text = "SELECT * FROM recent;";
+
+    if (!query.exec(query_text))
+    {
+        qDebug() << "Couldn't execute query: " << query_text << ". Reason: " << query.lastError().text();
+    }
+
+    // fill internal data structure
+    while (query.next())
+    {
+        QString folder_name = query.value(RECENT_TABLE_COLUMNS::NAME).toString();
+        QString path_name = query.value(RECENT_TABLE_COLUMNS::PATH).toString();
+
+        recent_locations.emplace(std::move(folder_name), std::move(path_name));
+    }
+
+    // update ui
+    for (const auto& recent_location : recent_locations)
+    {
+        addChild(recent, recent_location.first);
+    }
 }
 
 void Widget::setUpDirContentPanel()
