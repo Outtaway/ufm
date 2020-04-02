@@ -223,11 +223,20 @@ void Widget::setUpRecent(QTreeWidgetItem* recent)
     }
 
     QSqlQuery query(db);
-    QString query_text = "SELECT * FROM recent;";
 
-    if (!query.exec(query_text))
+    QString create_table_query = "CREATE TABLE recent(\"name\" TEXT, \"path\" TEXT);";
+
+    if (!query.exec(create_table_query))
     {
-        qDebug() << "Couldn't execute query: " << query_text << ". Reason: " << query.lastError().text();
+        qDebug() << query.lastError().databaseText();
+    }
+
+    QString select_all_query = "SELECT * FROM recent;";
+
+    if (!query.exec(select_all_query))
+    {
+        qDebug() << "Couldn't execute query: " << select_all_query << ". Reason: " << query.lastError().databaseText();
+        return;
     }
 
     // fill internal data structure
