@@ -16,11 +16,12 @@ Widget::Widget(QWidget* parent) :
 
     setUpQuickAccessPanel();
     setUpDirContentPanel();
+
+    QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Widget::onExit);
 }
 
 Widget::~Widget()
 {
-
 }
 
 void Widget::dir_selection_changed(const QItemSelection& selected, const QItemSelection&)
@@ -181,6 +182,11 @@ void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
 
 }
 
+void Widget::onExit()
+{
+    exportRecentToDatabase();
+}
+
 QTreeWidgetItem* Widget::addCategory(QTreeWidget* parent, QString name)
 {
     QTreeWidgetItem* new_category = new QTreeWidgetItem(parent);
@@ -268,9 +274,9 @@ void Widget::setUpRecent(QTreeWidgetItem* recent)
     }
 
     // fill internal datastructures
-    auto it = records.rbegin();
-    auto beg = records.rbegin();
-    auto end = records.rend();
+    auto it = records.begin();
+    auto beg = records.begin();
+    auto end = records.end();
     for (; it != end && std::distance(beg, it) < MAX_RECENT; ++it)
     {
         recent_locations.emplace_front(*it);
@@ -340,6 +346,41 @@ void Widget::addRecent(QString file_name, QString file_path)
     {
         recent_mapping.erase(recent_locations.back().first);
         recent_locations.pop_back();
+    }
+}
+
+void Widget::exportRecentToDatabase()
+{
+    // clear what is inside recent table
+    QSqlQuery query(db);
+
+    QString clear_table_query = "DELETE FROM ";
+    clear_table_query += RECENT_TABLE_NAME;
+    clear_table_query += ";";
+
+    if (!query.exec(clear_table_query))
+    {
+        qDebug() << "Couldn't clear table. Reason: " << query.lastError().databaseText();
+        return;
+    }
+
+    // insert what is in recent section to table
+
+    QString insert_query = "INSERT INTO recent VALUES(";
+
+    for (auto it = recent_locations.rbegin(); it != recent_locations.rend(); ++it)
+    {
+        QString name = "\"" + it->first + "\"";
+        QString path = "\"" + it->second + "\"";
+        QString tmp_query = insert_query + name + "," + path + ");";
+
+        qDebug() << "Executing query: " << tmp_query;
+
+        if (!query.exec(tmp_query))
+        {
+            qDebug() << "Couldn't insert row in table. " << query.lastError().databaseText();
+            return;
+        }
     }
 }
 

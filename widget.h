@@ -44,6 +44,7 @@ private slots:
 
     void on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column);
 
+    void onExit();
 private:
 
     Ui::Widget*                         ui;
@@ -77,6 +78,7 @@ private:
 
     const char* const RECENT_SECTION_NAME = "Recent";
     const char* const RECENT_DB_NAME = "recent.db";
+    const char* const RECENT_TABLE_NAME = "recent";
     QSqlDatabase db;
     std::list<std::pair<QString, QString>>          recent_locations;
     std::map<QString, decltype(recent_locations)::iterator> recent_mapping;
@@ -86,6 +88,7 @@ private:
     bool recentExists(QString file_name);
     void moveRecentToTop(QString file_name);
     void addRecent(QString file_name, QString file_path);
+    void exportRecentToDatabase();
 };
 
 #endif // WIDGET_H
