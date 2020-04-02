@@ -144,7 +144,12 @@ void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
     }
     else if (parent->text(0) == RECENT_SECTION_NAME)
     {
-        new_path = recent_locations[item->text(column)];
+        auto it = recent_mapping[item->text(column)];
+        recent_locations.emplace_front(*it);
+        recent_locations.erase(it);
+        recent_mapping[item->text(column)] = recent_locations.begin();
+        updateRecentSection();
+        new_path = recent_locations.front().second;
     }
     else
     {
@@ -185,6 +190,8 @@ QTreeWidgetItem* Widget::addChild(QTreeWidgetItem* parent, QString name)
 
 void Widget::setUpQuickAccess(QTreeWidgetItem* quick_access)
 {
+    quick_access_section = quick_access;
+
     std::map<QString, QStringList> standart_dirs;
 
     standart_dirs.insert({ DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation) });
@@ -204,14 +211,13 @@ void Widget::setUpQuickAccess(QTreeWidgetItem* quick_access)
     }
 
     // update ui
-    for (const auto& standart_location : standart_locations)
-    {
-        addChild(quick_access, standart_location.first);
-    }
+    updateQuickAccessSection();
 }
 
 void Widget::setUpRecent(QTreeWidgetItem* recent)
 {
+    recent_section = recent;
+
     db = QSqlDatabase::addDatabase("QSQLITE");
 
     db.setDatabaseName(RECENT_DB_NAME);
@@ -239,19 +245,59 @@ void Widget::setUpRecent(QTreeWidgetItem* recent)
         return;
     }
 
-    // fill internal data structure
+    // read out database
+   
+    std::vector<std::pair<QString, QString>> records;
+    
     while (query.next())
     {
         QString folder_name = query.value(RECENT_TABLE_COLUMNS::NAME).toString();
         QString path_name = query.value(RECENT_TABLE_COLUMNS::PATH).toString();
 
-        recent_locations.emplace(std::move(folder_name), std::move(path_name));
+        records.emplace_back(folder_name, path_name);
+    }
+
+    // fill internal datastructures
+    auto it = records.rbegin();
+    auto beg = records.rbegin();
+    auto end = records.rend();
+    for (; it != end && std::distance(beg, it) < MAX_RECENT; ++it)
+    {
+        recent_locations.emplace_front(*it);
+        recent_mapping.emplace(it->first, recent_locations.begin());
     }
 
     // update ui
+    updateRecentSection();
+}
+
+void Widget::updateQuickAccessSection()
+{
+    auto children = quick_access_section->takeChildren();
+
+    for (auto& child : children)
+    {
+        delete child;
+    }
+
+    for (const auto& standart_location : standart_locations)
+    {
+        addChild(quick_access_section, standart_location.first);
+    }
+}
+
+void Widget::updateRecentSection()
+{
+    auto children = recent_section->takeChildren();
+
+    for (auto& child : children)
+    {
+        delete child;
+    }
+
     for (const auto& recent_location : recent_locations)
     {
-        addChild(recent, recent_location.first);
+        addChild(recent_section, recent_location.first);
     }
 }
 

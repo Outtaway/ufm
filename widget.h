@@ -60,10 +60,12 @@ private:
     const char* const MUSIC = "Music";
     const char* const PICTURES = "Pictures";
     const char* const MOVIES = "Movies";
+    QTreeWidgetItem* quick_access_section;
     QTreeWidgetItem* addCategory(QTreeWidget* parent, QString name);
     QTreeWidgetItem* addChild(QTreeWidgetItem* parent, QString name);
     void setUpQuickAccess(QTreeWidgetItem* quick_access);
     void setUpRecent(QTreeWidgetItem* recent);
+    void updateQuickAccessSection();
     std::map<QString, QString>          standart_locations;
 
     // recent panel related
@@ -76,7 +78,11 @@ private:
     const char* const RECENT_SECTION_NAME = "Recent";
     const char* const RECENT_DB_NAME = "recent.db";
     QSqlDatabase db;
-    std::map<QString, QString>          recent_locations;
+    std::list<std::pair<QString, QString>>          recent_locations;
+    std::map<QString, decltype(recent_locations)::iterator> recent_mapping;
+    const int MAX_RECENT = 5;
+    QTreeWidgetItem* recent_section;
+    void updateRecentSection();
 };
 
 #endif // WIDGET_H
