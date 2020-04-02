@@ -1,5 +1,5 @@
-#include "widget.h"
-#include "ui_widget.h"
+#include "Window.h"
+#include "ui_window.h"
 #include <QDebug>
 #include <chrono>
 #include <iostream>
@@ -9,23 +9,23 @@
 
 using namespace std::literals;
 
-Widget::Widget(QWidget* parent) :
+Window::Window(QWidget* parent) :
     QWidget(parent)
 {
-    ui = new Ui::Widget;
+    ui = new Ui::Window;
     ui->setupUi(this);
 
     setUpQuickAccessPanel();
     setUpDirContentPanel();
 
-    QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Widget::onExit);
+    QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Window::onExit);
 }
 
-Widget::~Widget()
+Window::~Window()
 {
 }
 
-void Widget::dir_selection_changed(const QItemSelection& selected, const QItemSelection&)
+void Window::dir_selection_changed(const QItemSelection& selected, const QItemSelection&)
 {
     if (!selected.indexes().empty())
     {
@@ -37,7 +37,7 @@ void Widget::dir_selection_changed(const QItemSelection& selected, const QItemSe
     }
 }
 
-void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
+void Window::on_dir_content_doubleClicked(const QModelIndex& index)
 {
     QString file_name = file_system->fileName(index);
     QString file_path = file_system->filePath(index);
@@ -70,7 +70,7 @@ void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
     ui->dir_content->setCurrentIndex(QModelIndex());
 }
 
-void Widget::on_back_clicked()
+void Window::on_back_clicked()
 {
     QModelIndex current_dir_index = ui->dir_content->rootIndex();
     QModelIndex parent_dir_index = current_dir_index.parent();
@@ -90,7 +90,7 @@ void Widget::on_back_clicked()
     ui->dir_content->setCurrentIndex(QModelIndex());
 }
 
-void Widget::on_forward_clicked()
+void Window::on_forward_clicked()
 {
     QModelIndex selected_index = ui->dir_content->currentIndex();
 
@@ -112,7 +112,7 @@ void Widget::on_forward_clicked()
     ui->dir_content->setCurrentIndex(QModelIndex());
 }
 
-void Widget::on_path_line_itemClicked(QListWidgetItem*)
+void Window::on_path_line_itemClicked(QListWidgetItem*)
 {
     auto current_row = ui->path_line->currentRow();
     QModelIndex new_index = path[current_row];
@@ -130,7 +130,7 @@ void Widget::on_path_line_itemClicked(QListWidgetItem*)
     ui->path_line->clearSelection();
 }
 
-void Widget::setUpQuickAccessPanel()
+void Window::setUpQuickAccessPanel()
 {
     QTreeWidgetItem* quick_access = addCategory(ui->quick_panel, QUICK_ACCESS_SECTION_NAME);
     setUpQuickAccess(quick_access);
@@ -142,7 +142,7 @@ void Widget::setUpQuickAccessPanel()
     recent->setExpanded(true);
 }
 
-void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
+void Window::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
 {
     QTreeWidgetItem* parent = item->parent();
 
@@ -183,12 +183,12 @@ void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
 
 }
 
-void Widget::onExit()
+void Window::onExit()
 {
     exportRecentToDatabase();
 }
 
-QTreeWidgetItem* Widget::addCategory(QTreeWidget* parent, QString name)
+QTreeWidgetItem* Window::addCategory(QTreeWidget* parent, QString name)
 {
     QTreeWidgetItem* new_category = new QTreeWidgetItem(parent);
     new_category->setText(0, std::move(name));
@@ -197,7 +197,7 @@ QTreeWidgetItem* Widget::addCategory(QTreeWidget* parent, QString name)
     return new_category;
 }
 
-QTreeWidgetItem* Widget::addChild(QTreeWidgetItem* parent, QString name)
+QTreeWidgetItem* Window::addChild(QTreeWidgetItem* parent, QString name)
 {
     QTreeWidgetItem* new_category = new QTreeWidgetItem(parent);
     new_category->setText(0, std::move(name));
@@ -205,7 +205,7 @@ QTreeWidgetItem* Widget::addChild(QTreeWidgetItem* parent, QString name)
     return new_category;
 }
 
-void Widget::setUpQuickAccess(QTreeWidgetItem* quick_access)
+void Window::setUpQuickAccess(QTreeWidgetItem* quick_access)
 {
     quick_access_section = quick_access;
 
@@ -231,7 +231,7 @@ void Widget::setUpQuickAccess(QTreeWidgetItem* quick_access)
     updateQuickAccessSection();
 }
 
-void Widget::setUpRecent(QTreeWidgetItem* recent)
+void Window::setUpRecent(QTreeWidgetItem* recent)
 {
     recent_section = recent;
 
@@ -288,7 +288,7 @@ void Widget::setUpRecent(QTreeWidgetItem* recent)
     updateRecentSection();
 }
 
-void Widget::updateQuickAccessSection()
+void Window::updateQuickAccessSection()
 {
     auto children = quick_access_section->takeChildren();
 
@@ -303,7 +303,7 @@ void Widget::updateQuickAccessSection()
     }
 }
 
-void Widget::updateRecentSection()
+void Window::updateRecentSection()
 {
     auto children = recent_section->takeChildren();
 
@@ -318,12 +318,12 @@ void Widget::updateRecentSection()
     }
 }
 
-bool Widget::recentExists(QString file_name)
+bool Window::recentExists(QString file_name)
 {
     return recent_mapping.find(file_name) != recent_mapping.end();
 }
 
-void Widget::moveRecentToTop(QString file_name)
+void Window::moveRecentToTop(QString file_name)
 {
     if (recent_mapping.find(file_name) != recent_mapping.end())
     {
@@ -338,7 +338,7 @@ void Widget::moveRecentToTop(QString file_name)
     }
 }
 
-void Widget::addRecent(QString file_name, QString file_path)
+void Window::addRecent(QString file_name, QString file_path)
 {
     recent_locations.emplace_front(file_name, file_path);
     recent_mapping[file_name] = recent_locations.begin();
@@ -350,7 +350,7 @@ void Widget::addRecent(QString file_name, QString file_path)
     }
 }
 
-void Widget::exportRecentToDatabase()
+void Window::exportRecentToDatabase()
 {
     // clear what is inside recent table
     QSqlQuery query(db);
@@ -385,7 +385,7 @@ void Widget::exportRecentToDatabase()
     }
 }
 
-void Widget::setUpDirContentPanel()
+void Window::setUpDirContentPanel()
 {
     file_system = std::make_unique<QFileSystemModel>(this);
     ui->dir_content->setModel(file_system.get());
@@ -398,7 +398,7 @@ void Widget::setUpDirContentPanel()
     ui->dir_content->hideColumn(3);
 
     QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
-                     this, &Widget::dir_selection_changed);
+                     this, &Window::dir_selection_changed);
 
     ui->dir_content->header()->setStyleSheet(QString::fromUtf8("border: 1px solid #FFFFFF;"
                                                                "border-bottom: 1px solid #D3D3D3"));

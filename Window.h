@@ -1,5 +1,5 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <memory>
 #include <deque>
@@ -14,17 +14,17 @@
 #include <QSqlQuery>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
+namespace Ui { class Window; }
 QT_END_NAMESPACE
 
-class Widget : public QWidget
+class Window : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+    Window(QWidget *parent = nullptr);
+    ~Window();
 
 private slots:
 
@@ -47,7 +47,7 @@ private slots:
     void onExit();
 private:
 
-    Ui::Widget*                         ui;
+    Ui::Window*                         ui;
     std::unique_ptr<QFileSystemModel>   file_system;
 
     std::deque<QModelIndex>             path;
@@ -91,4 +91,4 @@ private:
     void exportRecentToDatabase();
 };
 
-#endif // WIDGET_H
+#endif // WINDOW_h
