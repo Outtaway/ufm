@@ -53,7 +53,10 @@ private:
     std::deque<QModelIndex>             path;
     const QString                       path_line_prefix = " 🠚 ";
 
-    // quick panel related
+    QTreeWidgetItem* addCategory(QTreeWidget* parent, QString name);
+    QTreeWidgetItem* addChild(QTreeWidgetItem* parent, QString name);
+
+    // quick access related
     const char* const QUICK_ACCESS_SECTION_NAME = "Quick access";
     const char* const DESKTOP = "Desktop";
     const char* const DOCUMENTS = "Documents";
@@ -62,10 +65,7 @@ private:
     const char* const PICTURES = "Pictures";
     const char* const MOVIES = "Movies";
     QTreeWidgetItem* quick_access_section;
-    QTreeWidgetItem* addCategory(QTreeWidget* parent, QString name);
-    QTreeWidgetItem* addChild(QTreeWidgetItem* parent, QString name);
     void setUpQuickAccess(QTreeWidgetItem* quick_access);
-    void setUpRecent(QTreeWidgetItem* recent);
     void updateQuickAccessSection();
     std::map<QString, QString>          standart_locations;
 
@@ -75,7 +75,6 @@ private:
         NAME = 0,
         PATH
     };
-
     const char* const RECENT_SECTION_NAME = "Recent";
     const char* const RECENT_DB_NAME = "recent.db";
     const char* const RECENT_TABLE_NAME = "recent";
@@ -84,6 +83,7 @@ private:
     std::map<QString, decltype(recent_locations)::iterator> recent_mapping;
     const int MAX_RECENT = 5;
     QTreeWidgetItem* recent_section;
+    void setUpRecent(QTreeWidgetItem* recent);
     void updateRecentSection();
     bool recentExists(QString file_name);
     void moveRecentToTop(QString file_name);

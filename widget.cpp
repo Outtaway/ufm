@@ -5,6 +5,7 @@
 #include <iostream>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QSettings>
 
 using namespace std::literals;
 
