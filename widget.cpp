@@ -20,6 +20,7 @@ Widget::Widget(QWidget* parent) :
 
 Widget::~Widget()
 {
+
 }
 
 void Widget::dir_selection_changed(const QItemSelection& selected, const QItemSelection&)
@@ -37,6 +38,7 @@ void Widget::dir_selection_changed(const QItemSelection& selected, const QItemSe
 void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
 {
     QString file_name = file_system->fileName(index);
+    QString file_path = file_system->filePath(index);
 
     if (file_system->isDir(index))
     {
@@ -45,10 +47,21 @@ void Widget::on_dir_content_doubleClicked(const QModelIndex& index)
         ui->path_line->addItem(path_line_prefix + file_name);
 
         path.push_back(index);
+        
+        if (recentExists(file_name))
+        {
+            moveRecentToTop(file_name);
+        }
+        else
+        {
+            addRecent(file_name, file_path);
+        }
+
+        updateRecentSection();
     }
     else
     {
-        QDesktopServices::openUrl(QUrl::fromLocalFile(file_system->filePath(index)));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
     }
 
     // clear selection
@@ -144,10 +157,7 @@ void Widget::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
     }
     else if (parent->text(0) == RECENT_SECTION_NAME)
     {
-        auto it = recent_mapping[item->text(column)];
-        recent_locations.emplace_front(*it);
-        recent_locations.erase(it);
-        recent_mapping[item->text(column)] = recent_locations.begin();
+        moveRecentToTop(item->text(column));
         updateRecentSection();
         new_path = recent_locations.front().second;
     }
@@ -298,6 +308,38 @@ void Widget::updateRecentSection()
     for (const auto& recent_location : recent_locations)
     {
         addChild(recent_section, recent_location.first);
+    }
+}
+
+bool Widget::recentExists(QString file_name)
+{
+    return recent_mapping.find(file_name) != recent_mapping.end();
+}
+
+void Widget::moveRecentToTop(QString file_name)
+{
+    if (recent_mapping.find(file_name) != recent_mapping.end())
+    {
+        auto it = recent_mapping[file_name];
+        recent_locations.emplace_front(*it);
+        recent_locations.erase(it);
+        recent_mapping[file_name] = recent_locations.begin();
+    }
+    else
+    {
+        qDebug() << "Couldn't move " << file_name << " to the top. It does not exist";
+    }
+}
+
+void Widget::addRecent(QString file_name, QString file_path)
+{
+    recent_locations.emplace_front(file_name, file_path);
+    recent_mapping[file_name] = recent_locations.begin();
+
+    if (recent_locations.size() > MAX_RECENT)
+    {
+        recent_mapping.erase(recent_locations.back().first);
+        recent_locations.pop_back();
     }
 }
 

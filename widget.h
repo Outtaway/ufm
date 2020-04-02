@@ -83,6 +83,9 @@ private:
     const int MAX_RECENT = 5;
     QTreeWidgetItem* recent_section;
     void updateRecentSection();
+    bool recentExists(QString file_name);
+    void moveRecentToTop(QString file_name);
+    void addRecent(QString file_name, QString file_path);
 };
 
 #endif // WIDGET_H
