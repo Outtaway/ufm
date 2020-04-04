@@ -13,6 +13,9 @@
 #include <QtSql>
 #include <QSqlQuery>
 
+#include "Content.h"
+#include "PathLine.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class Window; }
 QT_END_NAMESPACE
@@ -40,18 +43,15 @@ private slots:
 
     void setUpQuickAccessPanel();
 
-    void setUpDirContentPanel();
-
     void on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column);
 
     void onExit();
 private:
 
     Ui::Window*                         ui;
-    std::unique_ptr<QFileSystemModel>   file_system;
 
-    std::deque<QModelIndex>             path;
-    const QString                       path_line_prefix = " 🠚 ";
+    std::unique_ptr<Content>            content_;
+    std::unique_ptr<PathLine>           path_line_;
 
     QTreeWidgetItem* addCategory(QTreeWidget* parent, QString name);
     QTreeWidgetItem* addChild(QTreeWidgetItem* parent, QString name);

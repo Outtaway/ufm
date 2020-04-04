@@ -15,10 +15,17 @@ Window::Window(QWidget* parent) :
     ui = new Ui::Window;
     ui->setupUi(this);
 
+    content_ = std::make_unique<Content>(ui->dir_content);
+    content_->setup();
+
+    path_line_ = std::make_unique<PathLine>(ui->path_line);
+
     setUpQuickAccessPanel();
-    setUpDirContentPanel();
 
     QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Window::onExit);
+
+    QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
+        this, &Window::dir_selection_changed);
 }
 
 Window::~Window()
@@ -39,95 +46,56 @@ void Window::dir_selection_changed(const QItemSelection& selected, const QItemSe
 
 void Window::on_dir_content_doubleClicked(const QModelIndex& index)
 {
-    QString file_name = file_system->fileName(index);
-    QString file_path = file_system->filePath(index);
-
-    if (file_system->isDir(index))
+    if (content_->isDirectory(index))
     {
-        ui->dir_content->setRootIndex(index);
+        content_->setCurrentDirectory(index);
 
-        ui->path_line->addItem(path_line_prefix + file_name);
+        path_line_->pushBack(content_->getCurrentDirectory(), content_->getCurrentDirectoryName());
 
-        path.push_back(index);
-        
-        if (recentExists(file_name))
+        if (recentExists(content_->getCurrentDirectoryName()))
         {
-            moveRecentToTop(file_name);
+            moveRecentToTop(content_->getCurrentDirectoryName());
         }
         else
         {
-            addRecent(file_name, file_path);
+            addRecent(content_->getCurrentDirectoryName(), content_->getCurrentDirectoryFullPath());
         }
 
         updateRecentSection();
     }
     else
-    {
-        QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
-    }
+        content_->tryExecute(index);
 
-    // clear selection
-    ui->dir_content->setCurrentIndex(QModelIndex());
+    content_->clearSelection();
 }
 
 void Window::on_back_clicked()
 {
-    QModelIndex current_dir_index = ui->dir_content->rootIndex();
-    QModelIndex parent_dir_index = current_dir_index.parent();
+    if (content_->goOneDirectoryBack())
+        path_line_->popBack();
 
-    ui->dir_content->setRootIndex(parent_dir_index);
-
-    if (ui->path_line->count() > 0)
-    {
-        QListWidgetItem* last_item = ui->path_line->takeItem(ui->path_line->count() - 1);
-
-        delete last_item;
-
-        path.pop_back();
-    }
-
-    // clear selection
-    ui->dir_content->setCurrentIndex(QModelIndex());
+    content_->clearSelection();
 }
 
 void Window::on_forward_clicked()
 {
-    QModelIndex selected_index = ui->dir_content->currentIndex();
+    // TODO: fix bad behavior when clicked back on root folder("")
+    if (content_->goOneDirectoryForward())
+        path_line_->pushBack(content_->getCurrentDirectory(), content_->getCurrentDirectoryName());
 
-    if (selected_index.isValid())
-    {
-        QString file_name = file_system->fileName(selected_index);
-
-        if (file_system->isDir(selected_index))
-        {
-            ui->dir_content->setRootIndex(selected_index);
-
-            ui->path_line->addItem(path_line_prefix + file_name);
-
-            path.push_back(selected_index);
-        }
-    }
-
-     // clear selection
-    ui->dir_content->setCurrentIndex(QModelIndex());
+    content_->clearSelection();
 }
 
 void Window::on_path_line_itemClicked(QListWidgetItem*)
 {
-    auto current_row = ui->path_line->currentRow();
-    QModelIndex new_index = path[current_row];
+    auto selected_directory_pos = path_line_->selectedDirectoryPos();
 
-    ui->dir_content->setRootIndex(new_index);
+    QModelIndex new_directory = path_line_->directoryIndexAt(selected_directory_pos);
+    content_->setCurrentDirectory(new_directory);
 
-    path.erase(path.begin() + current_row + 1, path.end());
+    path_line_->erase(selected_directory_pos + 1u, path_line_->size() - (selected_directory_pos + 1u));
 
-    while (ui->path_line->count() - 1 != current_row)
-    {
-        QListWidgetItem* end_item = ui->path_line->takeItem(ui->path_line->count() - 1);
-        delete end_item;
-    }
-
-    ui->path_line->clearSelection();
+    path_line_->clearSelection();
 }
 
 void Window::setUpQuickAccessPanel()
@@ -168,19 +136,9 @@ void Window::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
         return;
     }
 
-    QModelIndex new_path_index = file_system->index(new_path);
+    content_->setCurrentDirectoryString(new_path);
 
-    ui->dir_content->setRootIndex(new_path_index);
-
-    path.clear();
-    ui->path_line->clear();
-    while (new_path_index.isValid())
-    {
-        path.push_front(new_path_index);
-        ui->path_line->insertItem(0, path_line_prefix + file_system->fileName(new_path_index));
-        new_path_index = new_path_index.parent();
-    }
-
+    path_line_->setPathChain(content_->composeCurrentDirPathChain());
 }
 
 void Window::onExit()
@@ -383,23 +341,4 @@ void Window::exportRecentToDatabase()
             return;
         }
     }
-}
-
-void Window::setUpDirContentPanel()
-{
-    file_system = std::make_unique<QFileSystemModel>(this);
-    ui->dir_content->setModel(file_system.get());
-    ui->dir_content->setRootIndex(file_system->setRootPath(""));
-    ui->dir_content->setItemsExpandable(false);
-
-    // hide size, type, date modified,
-    ui->dir_content->hideColumn(1);
-    ui->dir_content->hideColumn(2);
-    ui->dir_content->hideColumn(3);
-
-    QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
-                     this, &Window::dir_selection_changed);
-
-    ui->dir_content->header()->setStyleSheet(QString::fromUtf8("border: 1px solid #FFFFFF;"
-                                                               "border-bottom: 1px solid #D3D3D3"));
 }
