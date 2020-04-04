@@ -169,12 +169,12 @@ void Window::setUpQuickAccess(QTreeWidgetItem* quick_access)
 
     std::map<QString, QStringList> standart_dirs;
 
-    standart_dirs.insert({ DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation) });
-    standart_dirs.insert({ DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation) });
-    standart_dirs.insert({ DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation) });
-    standart_dirs.insert({ MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation) });
-    standart_dirs.insert({ PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation) });
-    standart_dirs.insert({ MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation) });
+    standart_dirs.emplace(DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation));
+    standart_dirs.emplace(DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
+    standart_dirs.emplace(DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation));
+    standart_dirs.emplace(MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation));
+    standart_dirs.emplace(PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation));
+    standart_dirs.emplace(MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation));
 
     // fill internal data structure
     for (auto& standart_dir : standart_dirs)
