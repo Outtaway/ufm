@@ -1,5 +1,4 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include <memory>
 #include <deque>
@@ -90,5 +89,3 @@ private:
     void addRecent(QString file_name, QString file_path);
     void exportRecentToDatabase();
 };
-
-#endif // WINDOW_h
