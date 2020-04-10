@@ -13,9 +13,16 @@ class PathChain;
 class Content
 {
 public:
+
 	Content(QTreeView* ui_tree_view, QString initial_directory = "");
 
+private:
+
 	void setup();
+
+	void setupFilesystem();
+
+public:
 
 	void tryExecute(const QModelIndex& index);
 
@@ -46,8 +53,6 @@ public:
 	void deleteSelected();
 
 private:
-
-	void setupFilesystem();
 
 	QString								initial_directory_;
 	QTreeView*							content_tree_view_;

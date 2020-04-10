@@ -3,7 +3,9 @@
 #include <QTreeWidget>
 
 QuickAccessSection::QuickAccessSection(QTreeWidgetItem* section, QString name) : SectionBase(section, name)
-{ }
+{
+    setup();
+}
 
 void QuickAccessSection::setup()
 {

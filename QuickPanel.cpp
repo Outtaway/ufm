@@ -4,17 +4,17 @@
 
 QuickPanel::QuickPanel(QTreeWidget* tree_view) :
     quick_panel_widget_(tree_view)
-{ }
+{
+    setup();
+}
 
 void QuickPanel::setup()
 {
     QTreeWidgetItem* quick_access = addSection_(quick_panel_widget_);
     sections_[QUICK_ACCESS_SECTION] = std::make_unique<QuickAccessSection>(quick_access, QUICK_ACCESS_SECTION);
-    sections_[QUICK_ACCESS_SECTION]->setup();
 
     QTreeWidgetItem* recent = addSection_(quick_panel_widget_);
     sections_[RECENT_SECTION] = std::make_unique<RecentSection>(recent, RECENT_SECTION);
-    sections_[RECENT_SECTION]->setup();
 }
 
 QTreeWidgetItem* QuickPanel::addSection_(QTreeWidget* parent)

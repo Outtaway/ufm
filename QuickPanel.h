@@ -15,7 +15,11 @@ public:
 
     QuickPanel(QTreeWidget* tree_view);
 
+private:
+
     void setup();
+
+public:
 
     void addItemToSection(QString section, QString name, QString path);
 

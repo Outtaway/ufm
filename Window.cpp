@@ -16,14 +16,12 @@ Window::Window(QWidget* parent) :
     ui->setupUi(this);
 
     content_ = std::make_shared<Content>(ui->dir_content);
-    content_->setup();
 
     content_context_menu_ = new ContentContextMenu(ui->dir_content, content_);
 
     path_line_ = std::make_unique<PathLine>(ui->path_line);
 
     quick_panel_ = std::make_unique<QuickPanel>(ui->quick_panel);
-    quick_panel_->setup();
 
     QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Window::onExit);
 

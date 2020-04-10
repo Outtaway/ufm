@@ -13,7 +13,11 @@ public:
 
     QuickAccessSection(QTreeWidgetItem* section, QString name);
 
+private:
+
     void setup() override;
+
+private:
 
     void addItem(QString name, QString path) override;
 
