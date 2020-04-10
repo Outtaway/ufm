@@ -7,7 +7,9 @@
 #include <QDebug>
 
 RecentSection::RecentSection(QTreeWidgetItem* section, QString name) : SectionBase(section, name)
-{ }
+{
+    setup();
+}
 
 RecentSection::~RecentSection()
 {

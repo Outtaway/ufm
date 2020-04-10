@@ -4,7 +4,9 @@
 
 QuickPanel::QuickPanel(QTreeWidget* tree_view) :
     quick_panel_widget_(tree_view)
-{ }
+{
+    setup();
+}
 
 void QuickPanel::setup()
 {

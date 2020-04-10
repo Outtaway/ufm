@@ -7,7 +7,9 @@
 Content::Content(QTreeView* ui_tree_view, QString initial_directory) :
     initial_directory_(initial_directory),
 	content_tree_view_(ui_tree_view)
-{ }
+{
+    setup();
+}
 
 void Content::setup()
 {
@@ -29,6 +31,13 @@ void Content::setup()
                                                                   "border-bottom: 1px solid #D3D3D3"));
 
     content_tree_view_->setContextMenuPolicy(Qt::CustomContextMenu);
+}
+
+void Content::setupFilesystem()
+{
+    file_system_model_ = std::make_unique<QFileSystemModel>();
+    file_system_model_->setRootPath(initial_directory_);
+    content_tree_view_->setModel(file_system_model_.get());
 }
 
 void Content::tryExecute(const QModelIndex& index)
@@ -125,11 +134,4 @@ void Content::deleteSelected()
         bool result = file_system_model_->remove(to_delete);
         qDebug() << "Deleting" << file_system_model_->fileName(to_delete) << "..." << (result ? "Success" : "Fail");
     }
-}
-
-void Content::setupFilesystem()
-{
-    file_system_model_ = std::make_unique<QFileSystemModel>();
-    file_system_model_->setRootPath(initial_directory_);
-    content_tree_view_->setModel(file_system_model_.get());
 }
