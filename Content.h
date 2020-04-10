@@ -25,6 +25,8 @@ public:
 
 	QModelIndex getCurrentDirectory();
 
+    QModelIndex getIndexAtPoint(const QPoint& point);
+
 	QString getCurrentDirectoryName();
 
 	QString getCurrentDirectoryFullPath();
@@ -40,6 +42,8 @@ public:
 	bool goOneDirectoryForward();
 
 	PathChain composeCurrentDirPathChain();
+
+	void deleteSelected();
 
 private:
 

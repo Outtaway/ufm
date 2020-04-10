@@ -1,5 +1,7 @@
 #include "PathLine.h"
 
+#include <QListWidget>
+
 PathLine::PathLine(QListWidget* path_line_list) :
 	path_line_list_(path_line_list)
 { }

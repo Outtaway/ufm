@@ -17,15 +17,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Content.cpp \
+    ContentContextMenu.cpp \
     PathChain.cpp \
     PathLine.cpp \
+    QuickAccessSection.cpp \
+    QuickPanel.cpp \
+    RecentSection.cpp \
+    SectionBase.cpp \
     Window.cpp \
     main.cpp
 
 HEADERS += \
     Content.h \
+    ContentContextMenu.h \
     PathChain.h \
     PathLine.h \
+    QuickAccessSection.h \
+    QuickPanel.h \
+    RecentSection.h \
+    SectionBase.h \
     Window.h
 
 FORMS += \

@@ -2,10 +2,10 @@
 
 #include "PathChain.h"
 
-#include <QListWidget>
 #include <QModelIndex>
 #include <QString>
 
+class QListWidget;
 
 class PathLine
 {

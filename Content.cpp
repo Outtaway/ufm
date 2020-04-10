@@ -1,5 +1,8 @@
 #include "Content.h"
+#include "Content.h"
 #include "PathChain.h"
+
+#include <QDebug>
 
 Content::Content(QTreeView* ui_tree_view, QString initial_directory) :
     initial_directory_(initial_directory),
@@ -24,6 +27,8 @@ void Content::setup()
 
     content_tree_view_->header()->setStyleSheet(QString::fromUtf8("border: 1px solid #FFFFFF;"
                                                                   "border-bottom: 1px solid #D3D3D3"));
+
+    content_tree_view_->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void Content::tryExecute(const QModelIndex& index)
@@ -45,6 +50,11 @@ void Content::setCurrentDirectoryString(const QString& dir)
 QModelIndex Content::getCurrentDirectory()
 {
     return content_tree_view_->rootIndex();
+}
+
+QModelIndex Content::getIndexAtPoint(const QPoint& point)
+{
+    return content_tree_view_->indexAt(point);
 }
 
 QString Content::getCurrentDirectoryName()
@@ -105,6 +115,16 @@ PathChain Content::composeCurrentDirPathChain()
     }
 
     return path_chain;
+}
+
+void Content::deleteSelected()
+{
+    QModelIndex to_delete = getSelectedItem();
+    if (to_delete.isValid())
+    {
+        bool result = file_system_model_->remove(to_delete);
+        qDebug() << "Deleting" << file_system_model_->fileName(to_delete) << "..." << (result ? "Success" : "Fail");
+    }
 }
 
 void Content::setupFilesystem()
