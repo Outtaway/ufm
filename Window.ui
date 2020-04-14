@@ -47,18 +47,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
          <property name="styleSheet">
           <string notr="true">QPushButton:hover
 {
@@ -72,9 +60,6 @@
           <iconset>
            <normalon>:/resources/left-arrow.png</normalon>
           </iconset>
-         </property>
-         <property name="default">
-          <bool>false</bool>
          </property>
          <property name="flat">
           <bool>true</bool>
@@ -91,18 +76,6 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>30</width>
-           <height>30</height>
-          </size>
          </property>
          <property name="styleSheet">
           <string notr="true">QPushButton:hover
@@ -126,7 +99,7 @@
        <item>
         <widget class="QListWidget" name="path_line">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
+          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -152,7 +125,7 @@
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -165,20 +138,14 @@
      </property>
      <widget class="QTreeWidget" name="quick_panel">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>0</height>
-       </size>
-      </property>
       <property name="maximumSize">
        <size>
-        <width>175</width>
+        <width>160</width>
         <height>16777215</height>
        </size>
       </property>
@@ -197,7 +164,7 @@ QTreeView::item{ margin: 0px 6px 6px 6px; border: 0;}</string>
      </widget>
      <widget class="QTreeView" name="dir_content">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
