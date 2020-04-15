@@ -18,6 +18,8 @@ private slots:
 
     void deleteSelected();
 
+    void renameSelected();
+
 private:
 
     std::shared_ptr<Content> content_;

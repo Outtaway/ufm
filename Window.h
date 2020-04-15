@@ -16,6 +16,7 @@
 #include "ContentContextMenu.h"
 #include "PathLine.h"
 #include "QuickPanel.h"
+#include "MenuBar.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Window; }
@@ -56,5 +57,6 @@ private:
     std::shared_ptr<Content>            content_;
     std::unique_ptr<PathLine>           path_line_;
     std::unique_ptr<QuickPanel>         quick_panel_;
+    MenuBar* menu_bar_;
 
 };

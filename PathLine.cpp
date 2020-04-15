@@ -4,7 +4,10 @@
 
 PathLine::PathLine(QListWidget* path_line_list) :
 	path_line_list_(path_line_list)
-{ }
+{
+    path_line_list_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    path_line_list_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
 
 void PathLine::setPathChain(PathChain new_path_chain)
 {

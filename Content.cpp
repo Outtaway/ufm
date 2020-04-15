@@ -1,8 +1,10 @@
 #include "Content.h"
 #include "Content.h"
 #include "PathChain.h"
+#include "Settings.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 Content::Content(QTreeView* ui_tree_view, QString initial_directory) :
     initial_directory_(initial_directory),
@@ -31,12 +33,22 @@ void Content::setup()
                                                                   "border-bottom: 1px solid #D3D3D3"));
 
     content_tree_view_->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    // exclude double click edit trigger
+    content_tree_view_->setEditTriggers(content_tree_view_->editTriggers() & ~QTreeView::EditTrigger::DoubleClicked);
+
+    if (!Settings::optionExist(Settings::OPTIONS::DELETE_APPROVAL))
+    {
+        Settings::setOption(Settings::OPTIONS::DELETE_APPROVAL, true);
+    }
 }
 
 void Content::setupFilesystem()
 {
     file_system_model_ = std::make_unique<QFileSystemModel>();
     file_system_model_->setRootPath(initial_directory_);
+    file_system_model_->setReadOnly(false);
+
     content_tree_view_->setModel(file_system_model_.get());
 }
 
@@ -131,7 +143,38 @@ void Content::deleteSelected()
     QModelIndex to_delete = getSelectedItem();
     if (to_delete.isValid())
     {
-        bool result = file_system_model_->remove(to_delete);
-        qDebug() << "Deleting" << file_system_model_->fileName(to_delete) << "..." << (result ? "Success" : "Fail");
+        bool approval_needed = Settings::getOption(Settings::OPTIONS::DELETE_APPROVAL).toBool();
+
+        if (approval_needed)
+        {
+            QMessageBox approve_box;
+            approve_box.setWindowTitle("Delete selected?");
+            approve_box.setText("Are you sure you want to delete: " + file_system_model_->fileName(to_delete));
+            approve_box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            approve_box.setDefaultButton(QMessageBox::Cancel);
+            if (approve_box.exec() == QMessageBox::Ok)
+            {
+                deleteByIndex(to_delete);
+            }
+        }
+        else
+        {
+            deleteByIndex(to_delete);
+        }
     }
+}
+
+void Content::renameSelected()
+{
+    QModelIndex to_rename = getSelectedItem();
+    if (to_rename.isValid())
+    {
+        content_tree_view_->edit(to_rename);
+    }
+}
+
+void Content::deleteByIndex(QModelIndex to_delete)
+{
+    bool result = file_system_model_->remove(to_delete);
+    qDebug() << "Deleting" << file_system_model_->fileName(to_delete) << "..." << (result ? "Success" : "Fail");
 }

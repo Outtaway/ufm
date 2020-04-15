@@ -52,7 +52,11 @@ public:
 
 	void deleteSelected();
 
+    void renameSelected();
+
 private:
+
+    void deleteByIndex(QModelIndex to_delete);
 
 	QString								initial_directory_;
 	QTreeView*							content_tree_view_;

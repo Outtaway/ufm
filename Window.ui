@@ -164,7 +164,7 @@ QTreeView::item{ margin: 0px 6px 6px 6px; border: 0;}</string>
      </widget>
      <widget class="QTreeView" name="dir_content">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>

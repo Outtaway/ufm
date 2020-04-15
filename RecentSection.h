@@ -47,7 +47,6 @@ private:
     const char* const RECENT_TABLE_NAME = "recent";
     std::unique_ptr<QSqlDatabase> db_;
 
-    const size_t MAX_RECENT = 5;
     std::list<std::pair<QString, QString>>   recent_locations_;
     std::map<QString, decltype(recent_locations_)::iterator>  recent_mapping_;
 

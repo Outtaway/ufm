@@ -6,6 +6,8 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <QMenuBar>
+#include <QVBoxLayout>
 
 using namespace std::literals;
 
@@ -22,6 +24,9 @@ Window::Window(QWidget* parent) :
     path_line_ = std::make_unique<PathLine>(ui->path_line);
 
     quick_panel_ = std::make_unique<QuickPanel>(ui->quick_panel);
+
+    menu_bar_ = new MenuBar(this);
+    static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, menu_bar_);
 
     QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Window::onExit);
 

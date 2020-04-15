@@ -1,4 +1,5 @@
 #include "RecentSection.h"
+#include "Settings.h"
 
 #include <QTreeWidget>
 #include <QtSql>
@@ -18,6 +19,12 @@ RecentSection::~RecentSection()
 
 void RecentSection::setup()
 {
+    if (!Settings::optionExist(Settings::OPTIONS::MAX_RECENT))
+    {
+        const int INIT_MAX_RECENT = 5;
+        Settings::setOption(Settings::OPTIONS::MAX_RECENT, INIT_MAX_RECENT);
+    }
+
     db_ = std::make_unique<QSqlDatabase>();
 
     if (!openDatabase_())
@@ -41,6 +48,7 @@ void RecentSection::addItem(QString name, QString path)
     recent_locations_.emplace_front(name, path);
     recent_mapping_[name] = recent_locations_.begin();
 
+    auto MAX_RECENT = Settings::getOption(Settings::OPTIONS::MAX_RECENT).toULongLong();
     if (recent_locations_.size() > MAX_RECENT)
     {
         recent_mapping_.erase(recent_locations_.back().first);
@@ -133,6 +141,7 @@ bool RecentSection::importRecentsFromDatabase_()
     auto it = records.begin();
     auto beg = records.begin();
     auto end = records.end();
+    auto MAX_RECENT = Settings::getOption(Settings::OPTIONS::MAX_RECENT).toInt();
     for (; it != end && std::distance(beg, it) < MAX_RECENT; ++it)
     {
         recent_locations_.emplace_front(*it);
