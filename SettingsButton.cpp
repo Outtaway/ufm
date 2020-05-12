@@ -2,8 +2,6 @@
 
 #include <QIcon>
 
-#include <QDebug>
-
 #include "SettingsWindow.h"
 
 SettingsButton::SettingsButton(QWidget* parent) :
