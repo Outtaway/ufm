@@ -11,4 +11,8 @@ public:
 
     MenuBar(QWidget* parent = nullptr);
 
+private slots:
+
+    void openAboutWindow();
+
 };

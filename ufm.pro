@@ -27,6 +27,7 @@ SOURCES += \
     SectionBase.cpp \
     Settings.cpp \
     SettingsButton.cpp \
+    SettingsWindow.cpp \
     Window.cpp \
     main.cpp
 
@@ -42,9 +43,11 @@ HEADERS += \
     SectionBase.h \
     Settings.h \
     SettingsButton.h \
+    SettingsWindow.h \
     Window.h
 
 FORMS += \
+    SettingsWindow.ui \
     Window.ui
 
 RESOURCES = application.qrc

@@ -10,4 +10,8 @@ public:
 
     SettingsButton(QWidget* parent = nullptr);
 
+private slots:
+
+    void settingsInvoked();
+
 };
