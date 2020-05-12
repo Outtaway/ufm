@@ -103,6 +103,7 @@ void Window::on_path_line_itemClicked(QListWidgetItem*)
     path_line_->erase(selected_directory_pos + 1u, path_line_->size() - (selected_directory_pos + 1u));
 
     path_line_->clearSelection();
+    content_->clearSelection();
 }
 
 void Window::on_quick_panel_itemDoubleClicked(QTreeWidgetItem* item, int column)
