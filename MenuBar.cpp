@@ -2,6 +2,7 @@
 
 MenuBar::MenuBar(QWidget* parent) : QMenuBar(parent)
 {
-    QAction* option_action = new QAction("Options", this);
-    this->addAction(option_action);
+    QAction* about_action = new QAction(this);
+    about_action->setText("About");
+    this->addAction(about_action);
 }

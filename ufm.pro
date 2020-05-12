@@ -26,6 +26,7 @@ SOURCES += \
     RecentSection.cpp \
     SectionBase.cpp \
     Settings.cpp \
+    SettingsButton.cpp \
     Window.cpp \
     main.cpp
 
@@ -40,6 +41,7 @@ HEADERS += \
     RecentSection.h \
     SectionBase.h \
     Settings.h \
+    SettingsButton.h \
     Window.h
 
 FORMS += \

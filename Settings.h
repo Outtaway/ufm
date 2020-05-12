@@ -27,6 +27,7 @@ public:
 
 private:
 
+    // C++17 feature
     static inline const QString settings_file_name_ = "application.ini";
     static inline const QSettings::Format settings_format_ = QSettings::Format::IniFormat;
 

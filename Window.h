@@ -11,12 +11,15 @@
 #include <QTreeWidget>
 #include <QtSql>
 #include <QSqlQuery>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "Content.h"
 #include "ContentContextMenu.h"
 #include "PathLine.h"
 #include "QuickPanel.h"
 #include "MenuBar.h"
+#include "SettingsButton.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Window; }
@@ -54,9 +57,13 @@ private:
     Ui::Window*                         ui;
 
     ContentContextMenu* content_context_menu_;
+
+    QHBoxLayout* layout_;
+    MenuBar* menu_bar_;
+    SettingsButton* settings_button_;
+
     std::shared_ptr<Content>            content_;
     std::unique_ptr<PathLine>           path_line_;
     std::unique_ptr<QuickPanel>         quick_panel_;
-    MenuBar* menu_bar_;
 
 };

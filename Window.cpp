@@ -7,7 +7,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QMenuBar>
-#include <QVBoxLayout>
+#include <QStyleFactory>
 
 using namespace std::literals;
 
@@ -25,8 +25,14 @@ Window::Window(QWidget* parent) :
 
     quick_panel_ = std::make_unique<QuickPanel>(ui->quick_panel);
 
+    settings_button_ = new SettingsButton(this);
+
     menu_bar_ = new MenuBar(this);
-    static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, menu_bar_);
+
+    layout_= new QHBoxLayout(this);
+    layout_->addWidget(menu_bar_);
+    layout_->addWidget(settings_button_);
+    static_cast<QVBoxLayout*>(this->layout())->insertLayout(0, layout_);
 
     QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Window::onExit);
 

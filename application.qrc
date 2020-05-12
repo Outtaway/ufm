@@ -1,6 +1,7 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>resources/left-arrow.png</file>
-    <file>resources/right-arrow.png</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>resources/left-arrow.png</file>
+        <file>resources/right-arrow.png</file>
+        <file>resources/settings.png</file>
+    </qresource>
 </RCC>
