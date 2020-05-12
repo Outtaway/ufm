@@ -13,6 +13,8 @@ SettingsButton::SettingsButton(QWidget* parent) :
 
     this->setIcon(settings_icon);
     this->setIconSize(QSize(20, 20));
+    this->setStyleSheet("QPushButton:hover { border: 1px solid #D3D3D3; }");
+    this->setFlat(true);
 
     QObject::connect(this, &QPushButton::clicked, this, &SettingsButton::settingsInvoked);
 }
