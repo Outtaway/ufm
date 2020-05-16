@@ -10,5 +10,13 @@
         <file>resources/rename.png</file>
         <file>resources/folder.png</file>
         <file>resources/file.png</file>
+        <file>resources/quick_access.png</file>
+        <file>resources/recent.png</file>
+        <file>resources/desktop.png</file>
+        <file>resources/documents.png</file>
+        <file>resources/downloads.png</file>
+        <file>resources/music.png</file>
+        <file>resources/pictures.png</file>
+        <file>resources/movies.png</file>
     </qresource>
 </RCC>

@@ -4,6 +4,7 @@
 
 #include <QString>
 #include <QStandardPaths>
+#include <QIcon>
 
 #include "SectionBase.h"
 
@@ -35,5 +36,6 @@ private:
     const char* const MOVIES = "Movies";
 
     std::map<QString, QString>          standart_locations_;
+    std::map<QString, QIcon>            locations_png_;
 
 };

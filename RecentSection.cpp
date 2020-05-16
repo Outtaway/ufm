@@ -33,6 +33,9 @@ void RecentSection::setup()
     if (!importRecentsFromDatabase_())
         return;
 
+    QIcon icon(":/resources/recent.png");
+    section_->setIcon(0, icon);
+
     SectionBase::setup();
     updateUi();
 }
@@ -63,6 +66,8 @@ void RecentSection::updateUi()
     for (const auto& recent_location : recent_locations_)
     {
         QTreeWidgetItem* child = new QTreeWidgetItem(section_);
+        QIcon icon(":/resources/folder.png");
+        child->setIcon(0, icon);
         child->setText(0, recent_location.first);
 
         section_->addChild(child);
