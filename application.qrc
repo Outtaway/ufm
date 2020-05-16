@@ -3,5 +3,12 @@
         <file>resources/left-arrow.png</file>
         <file>resources/right-arrow.png</file>
         <file>resources/settings.png</file>
+        <file>resources/pin.png</file>
+        <file>resources/move.png</file>
+        <file>resources/copy.png</file>
+        <file>resources/delete.png</file>
+        <file>resources/rename.png</file>
+        <file>resources/folder.png</file>
+        <file>resources/file.png</file>
     </qresource>
 </RCC>
