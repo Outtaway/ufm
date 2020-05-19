@@ -100,7 +100,7 @@ bool RecentSection::recentExists_(QString name)
 
 bool RecentSection::openDatabase_()
 {
-    *db_ = QSqlDatabase::addDatabase("QSQLITE");
+    *db_ = QSqlDatabase::addDatabase("QSQLITE", "recent_connection");
 
     db_->setDatabaseName(RECENT_DB_NAME);
 
@@ -137,9 +137,9 @@ bool RecentSection::importRecentsFromDatabase_()
     while (query.next())
     {
         QString folder_name = query.value(RECENT_TABLE_COLUMNS::NAME).toString();
-        QString path_name = query.value(RECENT_TABLE_COLUMNS::PATH).toString();
+        QString path = query.value(RECENT_TABLE_COLUMNS::PATH).toString();
 
-        records.emplace_back(std::move(folder_name), std::move(path_name));
+        records.emplace_back(std::move(folder_name), std::move(path));
     }
 
     // fill internal datastructures

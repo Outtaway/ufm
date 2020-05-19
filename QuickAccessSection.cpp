@@ -1,22 +1,28 @@
 #include "QuickAccessSection.h"
 
 #include <QTreeWidget>
+#include <QtSql>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 
 QuickAccessSection::QuickAccessSection(QTreeWidgetItem* section, QString name) : SectionBase(section, name)
 {
     setup();
 }
 
+QuickAccessSection::~QuickAccessSection()
+{
+    exportQuickAccessToDatabase_();
+}
+
 void QuickAccessSection::setup()
 {
-    std::map<QString, QStringList> standart_locations;
-
-    standart_locations.emplace(DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation));
-    standart_locations.emplace(DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
-    standart_locations.emplace(DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation));
-    standart_locations.emplace(MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation));
-    standart_locations.emplace(PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation));
-    standart_locations.emplace(MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation));
+    standart_locations_.emplace(DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation));
+    standart_locations_.emplace(DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
+    standart_locations_.emplace(DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation));
+    standart_locations_.emplace(MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation));
+    standart_locations_.emplace(PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation));
+    standart_locations_.emplace(MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation));
 
     locations_png_.emplace(DESKTOP, ":/resources/desktop.png");
     locations_png_.emplace(DOCUMENTS, ":/resources/documents.png");
@@ -26,7 +32,7 @@ void QuickAccessSection::setup()
     locations_png_.emplace(MOVIES, ":/resources/movies.png");
 
     // fill internal data structure
-    for (auto& standart_dir : standart_locations)
+    for (auto& standart_dir : standart_locations_)
     {
         if (!standart_dir.second.empty())
         {
@@ -34,10 +40,18 @@ void QuickAccessSection::setup()
         }
     }
 
+    db_ = std::make_unique<QSqlDatabase>();
+
     SectionBase::setup();
 
     QIcon icon(":/resources/quick_access.png");
     section_->setIcon(0, icon);
+
+    if (!openDatabase_())
+        return;
+
+    if (!importQuickAccessFromDatabase_())
+        return;
 
     updateUi();
 }
@@ -75,4 +89,95 @@ void QuickAccessSection::updateUi()
 QString QuickAccessSection::getPathByName(QString name)
 {
     return quick_items_[name];
+}
+
+bool QuickAccessSection::importQuickAccessFromDatabase_()
+{
+    QSqlQuery query(*db_);
+
+    QString create_table_query = "CREATE TABLE quick_access(\"name\" TEXT, \"path\" TEXT);";
+
+    if (!query.exec(create_table_query))
+    {
+        qDebug() << query.lastError().databaseText();
+    }
+
+    QString select_all_query = "SELECT * FROM quick_access;";
+
+    if (!query.exec(select_all_query))
+    {
+        qDebug() << "Couldn't execute query: " << select_all_query << ". Reason: " << query.lastError().databaseText();
+        return false;
+    }
+
+    // read out database
+    while (query.next())
+    {
+        QString folder_name = query.value(QUICK_ACCESS_TABLE_COLUMNS::NAME).toString();
+        QString path = query.value(QUICK_ACCESS_TABLE_COLUMNS::PATH).toString();
+        addItem(std::move(folder_name), std::move(path));
+    }
+
+    return true;
+}
+
+bool QuickAccessSection::exportQuickAccessToDatabase_()
+{
+    // clear what is inside quick access table
+    QSqlQuery query(*db_);
+
+    QString clear_table_query = "DELETE FROM ";
+    clear_table_query += QUICK_ACCESS_TABLE_NAME;
+    clear_table_query += ";";
+
+    if (!query.exec(clear_table_query))
+    {
+        qDebug() << "Couldn't clear table. Reason: " << query.lastError().databaseText();
+        return false;
+    }
+
+    // insert what is in quick access section to table
+    QString insert_query = "INSERT INTO ";
+    insert_query += QUICK_ACCESS_TABLE_NAME;
+    insert_query += " VALUES(\"name\", \"path\");";
+
+    for (auto it = quick_items_.begin(); it != quick_items_.end(); ++it)
+    {
+        if (!isStandartLocation_(it->first))
+        {
+            QString tmp_query = insert_query;
+            tmp_query.replace("name", it->first);
+            tmp_query.replace("path", it->second);
+
+            qDebug() << "Executing query: " << tmp_query;
+
+            if (!query.exec(tmp_query))
+            {
+                qDebug() << "Couldn't insert row in table. " << query.lastError().databaseText();
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool QuickAccessSection::openDatabase_()
+{
+    *db_ = QSqlDatabase::addDatabase("QSQLITE", "quick_access_connection");
+
+    db_->setDatabaseName(QUICK_ACCESS_DB_NAME);
+
+    if (!db_->open())
+    {
+        qDebug() << "Database was not opened: " << QUICK_ACCESS_DB_NAME << ", reason: " << db_->lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+bool QuickAccessSection::isStandartLocation_(QString name)
+{
+    return standart_locations_.find(name) != standart_locations_.end();
 }
