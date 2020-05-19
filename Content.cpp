@@ -55,6 +55,7 @@ void Content::setup()
     }
 
     QObject::connect(&Settings::getInstance(), &Settings::optionChanged, this, &Content::settingsChanged);
+    qDebug() << content_tree_view_->selectionMode();
 }
 
 void Content::setupFilesystem()
@@ -185,6 +186,22 @@ void Content::renameSelected()
     {
         content_tree_view_->edit(to_rename);
     }
+}
+
+QString Content::getSelectedName()
+{
+    QModelIndex selected = getSelectedItem();
+    if (!selected.isValid())
+        return {};
+    return file_system_model_->fileName(getSelectedItem());
+}
+
+QString Content::getSelectedPath()
+{
+    QModelIndex selected = getSelectedItem();
+    if (!selected.isValid())
+        return {};
+    return file_system_model_->filePath(getSelectedItem());
 }
 
 void Content::settingsChanged(const Settings::OPTIONS option, const QVariant value)

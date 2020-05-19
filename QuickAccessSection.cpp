@@ -9,14 +9,14 @@ QuickAccessSection::QuickAccessSection(QTreeWidgetItem* section, QString name) :
 
 void QuickAccessSection::setup()
 {
-    std::map<QString, QStringList> standart_dirs;
+    std::map<QString, QStringList> standart_locations;
 
-    standart_dirs.emplace(DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation));
-    standart_dirs.emplace(DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
-    standart_dirs.emplace(DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation));
-    standart_dirs.emplace(MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation));
-    standart_dirs.emplace(PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation));
-    standart_dirs.emplace(MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation));
+    standart_locations.emplace(DESKTOP, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation));
+    standart_locations.emplace(DOCUMENTS, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation));
+    standart_locations.emplace(DOWNLOADS, QStandardPaths::standardLocations(QStandardPaths::DownloadLocation));
+    standart_locations.emplace(MUSIC, QStandardPaths::standardLocations(QStandardPaths::MusicLocation));
+    standart_locations.emplace(PICTURES, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation));
+    standart_locations.emplace(MOVIES, QStandardPaths::standardLocations(QStandardPaths::MoviesLocation));
 
     locations_png_.emplace(DESKTOP, ":/resources/desktop.png");
     locations_png_.emplace(DOCUMENTS, ":/resources/documents.png");
@@ -26,7 +26,7 @@ void QuickAccessSection::setup()
     locations_png_.emplace(MOVIES, ":/resources/movies.png");
 
     // fill internal data structure
-    for (auto& standart_dir : standart_dirs)
+    for (auto& standart_dir : standart_locations)
     {
         if (!standart_dir.second.empty())
         {
@@ -44,17 +44,28 @@ void QuickAccessSection::setup()
 
 void QuickAccessSection::addItem(QString name, QString path)
 {
-    standart_locations_.emplace(std::move(name), std::move(path));
+    quick_items_.emplace(std::move(name), std::move(path));
 }
 
 void QuickAccessSection::updateUi()
 {
     SectionBase::clearSection_();
 
-    for (const auto& standart_location : standart_locations_)
+    for (const auto& standart_location : quick_items_)
     {
         QTreeWidgetItem* child = new QTreeWidgetItem(section_);
-        child->setIcon(0, locations_png_[standart_location.first]);
+
+        if (locations_png_.find(standart_location.first) != locations_png_.end())
+        {
+            child->setIcon(0, locations_png_[standart_location.first]);
+        }
+        else
+        {
+            // if item is not standart location, then just set folder icon
+            QIcon icon(":/resources/folder.png");
+            child->setIcon(0, icon);
+        }
+
         child->setText(0, standart_location.first);
 
         section_->addChild(child);
@@ -63,5 +74,5 @@ void QuickAccessSection::updateUi()
 
 QString QuickAccessSection::getPathByName(QString name)
 {
-    return standart_locations_[name];
+    return quick_items_[name];
 }

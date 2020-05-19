@@ -52,6 +52,8 @@ private slots:
 
     void onExit();
 
+    void on_pin_button_clicked();
+
 private:
 
     Ui::Window*                         ui;

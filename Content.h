@@ -65,6 +65,10 @@ public:
 
     void renameSelected();
 
+    QString getSelectedName();
+
+    QString getSelectedPath();
+
 private slots:
 
     void settingsChanged(const Settings::OPTIONS option, const QVariant value);

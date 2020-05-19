@@ -35,7 +35,7 @@ private:
     const char* const PICTURES = "Pictures";
     const char* const MOVIES = "Movies";
 
-    std::map<QString, QString>          standart_locations_;
+    std::map<QString, QString>          quick_items_;
     std::map<QString, QIcon>            locations_png_;
 
 };

@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "ui_window.h"
+#include "ui_Window.h"
 
 #include <chrono>
 #include <iostream>
@@ -48,9 +48,31 @@ Window::~Window()
 void Window::dir_selection_changed(const QItemSelection& selected, const QItemSelection&)
 {
     if (!selected.indexes().empty())
-        ui->forward->setEnabled(true);
+    {
+        if (content_->isDirectory(selected.indexes().last()))
+        {
+            ui->pin_button->setEnabled(true);
+            ui->forward->setEnabled(true);
+        }
+        else
+        {
+            ui->pin_button->setEnabled(false);
+            ui->forward->setEnabled(false);
+        }
+        ui->rename_button->setEnabled(true);
+        ui->delete_button->setEnabled(true);
+        ui->move_button->setEnabled(true);
+        ui->copy_button->setEnabled(true);
+    }
     else
+    {
+        ui->rename_button->setEnabled(false);
+        ui->delete_button->setEnabled(false);
+        ui->pin_button->setEnabled(false);
+        ui->move_button->setEnabled(false);
+        ui->copy_button->setEnabled(false);
         ui->forward->setEnabled(false);
+    }
 }
 
 void Window::on_dir_content_doubleClicked(const QModelIndex& index)
@@ -137,4 +159,13 @@ void Window::onExit()
 {
     // recent section is destroyed so recents are exported to database
     quick_panel_.reset();
+}
+
+void Window::on_pin_button_clicked()
+{
+    QString name = content_->getSelectedName();
+    QString path = content_->getSelectedPath();
+    quick_panel_->addItemToSection(QuickPanel::QUICK_ACCESS_SECTION, name, path);
+
+    content_->clearSelection();
 }
