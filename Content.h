@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Settings.h"
+
 #include <QFileSystemModel>
 #include <QTreeView>
 #include <QHeaderView>
@@ -10,8 +12,9 @@
 
 class PathChain;
 
-class Content
+class Content : public QObject
 {
+    Q_OBJECT
 public:
 
 	Content(QTreeView* ui_tree_view, QString initial_directory = "");
@@ -23,6 +26,14 @@ private:
 	void setupFilesystem();
 
 public:
+
+    enum COLUMNS
+    {
+        NAME = 0,
+        SIZE,
+        TYPE,
+        LAST_MODIFIED
+    };
 
 	void tryExecute(const QModelIndex& index);
 
@@ -53,6 +64,10 @@ public:
 	void deleteSelected();
 
     void renameSelected();
+
+private slots:
+
+    void settingsChanged(const Settings::OPTIONS option, const QVariant value);
 
 private:
 

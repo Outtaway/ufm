@@ -1,7 +1,6 @@
 #include "Content.h"
 #include "Content.h"
 #include "PathChain.h"
-#include "Settings.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -24,10 +23,23 @@ void Content::setup()
     // user should double click on directory to see its content
     content_tree_view_->setItemsExpandable(false);
 
-    // hide size, type, date modified,
-    content_tree_view_->hideColumn(1);
-    content_tree_view_->hideColumn(2);
-    content_tree_view_->hideColumn(3);
+    if (!Settings::getInstance().optionExist(Settings::OPTIONS::SHOW_SIZE))
+    {
+        Settings::getInstance().setOption(Settings::OPTIONS::SHOW_SIZE, false);
+    }
+    content_tree_view_->setColumnHidden(COLUMNS::SIZE, !Settings::getInstance().getOption(Settings::OPTIONS::SHOW_SIZE).toBool());
+
+    if (!Settings::getInstance().optionExist(Settings::OPTIONS::SHOW_TYPE))
+    {
+        Settings::getInstance().setOption(Settings::OPTIONS::SHOW_TYPE, false);
+    }
+    content_tree_view_->setColumnHidden(COLUMNS::TYPE, !Settings::getInstance().getOption(Settings::OPTIONS::SHOW_TYPE).toBool());
+
+    if (!Settings::getInstance().optionExist(Settings::OPTIONS::SHOW_LAST_MODIFIED))
+    {
+        Settings::getInstance().setOption(Settings::OPTIONS::SHOW_LAST_MODIFIED, false);
+    }
+    content_tree_view_->setColumnHidden(COLUMNS::LAST_MODIFIED, !Settings::getInstance().getOption(Settings::OPTIONS::SHOW_LAST_MODIFIED).toBool());
 
     content_tree_view_->header()->setStyleSheet(QString::fromUtf8("border: 1px solid #FFFFFF;"
                                                                   "border-bottom: 1px solid #D3D3D3"));
@@ -37,10 +49,12 @@ void Content::setup()
     // exclude double click edit trigger
     content_tree_view_->setEditTriggers(content_tree_view_->editTriggers() & ~QTreeView::EditTrigger::DoubleClicked);
 
-    if (!Settings::optionExist(Settings::OPTIONS::DELETE_APPROVAL))
+    if (!Settings::getInstance().optionExist(Settings::OPTIONS::DELETE_APPROVAL))
     {
-        Settings::setOption(Settings::OPTIONS::DELETE_APPROVAL, true);
+        Settings::getInstance().setOption(Settings::OPTIONS::DELETE_APPROVAL, true);
     }
+
+    QObject::connect(&Settings::getInstance(), &Settings::optionChanged, this, &Content::settingsChanged);
 }
 
 void Content::setupFilesystem()
@@ -143,7 +157,7 @@ void Content::deleteSelected()
     QModelIndex to_delete = getSelectedItem();
     if (to_delete.isValid())
     {
-        bool approval_needed = Settings::getOption(Settings::OPTIONS::DELETE_APPROVAL).toBool();
+        bool approval_needed = Settings::getInstance().getOption(Settings::OPTIONS::DELETE_APPROVAL).toBool();
 
         if (approval_needed)
         {
@@ -170,6 +184,24 @@ void Content::renameSelected()
     if (to_rename.isValid())
     {
         content_tree_view_->edit(to_rename);
+    }
+}
+
+void Content::settingsChanged(const Settings::OPTIONS option, const QVariant value)
+{
+    switch(option)
+    {
+    case Settings::OPTIONS::SHOW_SIZE:
+        content_tree_view_->setColumnHidden(COLUMNS::SIZE, !value.toBool());
+        break;
+    case Settings::OPTIONS::SHOW_TYPE:
+        content_tree_view_->setColumnHidden(COLUMNS::TYPE, !value.toBool());
+        break;
+    case Settings::OPTIONS::SHOW_LAST_MODIFIED:
+        content_tree_view_->setColumnHidden(COLUMNS::LAST_MODIFIED, !value.toBool());
+        break;
+    default:
+        break;
     }
 }
 

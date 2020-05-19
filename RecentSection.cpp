@@ -19,10 +19,10 @@ RecentSection::~RecentSection()
 
 void RecentSection::setup()
 {
-    if (!Settings::optionExist(Settings::OPTIONS::MAX_RECENT))
+    if (!Settings::getInstance().optionExist(Settings::OPTIONS::MAX_RECENT))
     {
         const int INIT_MAX_RECENT = 5;
-        Settings::setOption(Settings::OPTIONS::MAX_RECENT, INIT_MAX_RECENT);
+        Settings::getInstance().setOption(Settings::OPTIONS::MAX_RECENT, INIT_MAX_RECENT);
     }
 
     db_ = std::make_unique<QSqlDatabase>();
@@ -51,7 +51,7 @@ void RecentSection::addItem(QString name, QString path)
     recent_locations_.emplace_front(name, path);
     recent_mapping_[name] = recent_locations_.begin();
 
-    auto MAX_RECENT = Settings::getOption(Settings::OPTIONS::MAX_RECENT).toUInt();
+    auto MAX_RECENT = Settings::getInstance().getOption(Settings::OPTIONS::MAX_RECENT).toUInt();
     if (recent_locations_.size() > MAX_RECENT)
     {
         recent_mapping_.erase(recent_locations_.back().first);
@@ -146,7 +146,7 @@ bool RecentSection::importRecentsFromDatabase_()
     auto it = records.begin();
     auto beg = records.begin();
     auto end = records.end();
-    auto MAX_RECENT = Settings::getOption(Settings::OPTIONS::MAX_RECENT).toUInt();
+    auto MAX_RECENT = Settings::getInstance().getOption(Settings::OPTIONS::MAX_RECENT).toUInt();
     for (; it != end && std::distance(beg, it) < MAX_RECENT; ++it)
     {
         recent_locations_.emplace_front(*it);
