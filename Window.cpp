@@ -34,15 +34,29 @@ Window::Window(QWidget* parent) :
     layout_->addWidget(settings_button_);
     static_cast<QVBoxLayout*>(this->layout())->insertLayout(0, layout_);
 
-    QObject::connect(QApplication::instance(), &QApplication::aboutToQuit, this, &Window::onExit);
+    QObject::connect(QApplication::instance(), &QApplication::aboutToQuit,
+                     this, &Window::onExit);
 
     QObject::connect(ui->dir_content->selectionModel(), &QItemSelectionModel::selectionChanged,
-        this, &Window::dir_selection_changed);
+                     this, &Window::dir_selection_changed);
 
-    QObject::connect(ui->dir_content, &QTreeView::customContextMenuRequested, this, &Window::on_dir_content_custom_menu);
+    QObject::connect(ui->dir_content, &QTreeView::customContextMenuRequested,
+                     this, &Window::on_dir_content_custom_menu);
 
     QObject::connect(ui->quick_panel, &QTreeWidget::currentItemChanged,
-        this, &Window::quick_panel_selection_changed);
+                     this, &Window::quick_panel_selection_changed);
+
+    QObject::connect(ui->delete_button, &QPushButton::clicked,
+                     &(*content_), &Content::deleteSelected);
+
+    QObject::connect(ui->rename_button, &QPushButton::clicked,
+                     &(*content_), &Content::renameSelected);
+
+    QObject::connect(ui->new_folder_button, &QPushButton::clicked,
+                     &(*content_), &Content::newDirectory);
+
+    QObject::connect(ui->new_file_button, &QPushButton::clicked,
+                     &(*content_), &Content::newFile);
 }
 
 Window::~Window()
@@ -78,7 +92,7 @@ void Window::dir_selection_changed(const QItemSelection& selected, const QItemSe
     }
 }
 
-void Window::quick_panel_selection_changed(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void Window::quick_panel_selection_changed(QTreeWidgetItem* current, QTreeWidgetItem*)
 {
     if (quick_panel_->isSection(current->parent(), QuickPanel::QUICK_ACCESS_SECTION))
     {

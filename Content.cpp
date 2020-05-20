@@ -3,6 +3,7 @@
 #include "PathChain.h"
 
 #include <QDebug>
+#include <QInputDialog>
 #include <QMessageBox>
 
 Content::Content(QTreeView* ui_tree_view, QString initial_directory) :
@@ -108,6 +109,11 @@ QModelIndex Content::getSelectedItem()
     return content_tree_view_->currentIndex();
 }
 
+bool Content::currentIsRoot()
+{
+    return file_system_model_->rootPath() == file_system_model_->filePath(getCurrentDirectory());
+}
+
 void Content::clearSelection()
 {
     content_tree_view_->setCurrentIndex(QModelIndex());
@@ -120,6 +126,8 @@ bool Content::isDirectory(const QModelIndex& index)
 
 bool Content::goOneDirectoryBack()
 {
+    if (currentIsRoot())
+        return false;
     QModelIndex parent_directory = getCurrentDirectory().parent();
 
     setCurrentDirectory(parent_directory);
@@ -155,6 +163,8 @@ PathChain Content::composeCurrentDirPathChain()
 
 void Content::deleteSelected()
 {
+    if (currentIsRoot())
+        return;
     QModelIndex to_delete = getSelectedItem();
     if (to_delete.isValid())
     {
@@ -181,11 +191,52 @@ void Content::deleteSelected()
 
 void Content::renameSelected()
 {
+    if (currentIsRoot())
+        return;
     QModelIndex to_rename = getSelectedItem();
     if (to_rename.isValid())
     {
         content_tree_view_->edit(to_rename);
     }
+}
+
+void Content::newFile()
+{
+    if (currentIsRoot())
+        return;
+    QString new_file_name = QInputDialog::getText(nullptr, "UFM", "Enter name of new file: ");
+    QString current_directory_path = file_system_model_->filePath(getCurrentDirectory());
+    QFileInfo info(current_directory_path + "/" + new_file_name);
+    if (info.exists())
+    {
+        QMessageBox messageBox;
+        messageBox.critical(0, "UFM", "File with such name exists!");
+        return;
+    }
+    QFile file(current_directory_path + "/" + new_file_name);
+    file.open(QIODevice::WriteOnly);
+    file.write("");
+}
+
+void Content::newDirectory()
+{
+    if (currentIsRoot())
+        return;
+    QString new_folder_base_name = "new_folder";
+    QString new_folder_name;
+    QString current_directory_path = file_system_model_->filePath(getCurrentDirectory());
+    for (size_t i = 1;;++i)
+    {
+        QFileInfo info(current_directory_path + "/" + new_folder_base_name + QString::number(i));
+        if (!info.exists())
+        {
+            new_folder_name = new_folder_base_name + QString::number(i);
+            break;
+        }
+    }
+    qDebug() << "Creation of new directory acquired, new directory name: " << new_folder_name;
+    QModelIndex new_directory = file_system_model_->mkdir(getCurrentDirectory(), new_folder_name);
+    content_tree_view_->edit(new_directory);
 }
 
 QString Content::getSelectedName()

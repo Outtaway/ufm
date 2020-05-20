@@ -51,6 +51,8 @@ public:
 
 	QModelIndex getSelectedItem();
 
+    bool currentIsRoot();
+
 	void clearSelection();
 
 	bool isDirectory(const QModelIndex& index);
@@ -61,13 +63,15 @@ public:
 
 	PathChain composeCurrentDirPathChain();
 
-	void deleteSelected();
-
-    void renameSelected();
-
     QString getSelectedName();
 
     QString getSelectedPath();
+
+public slots:
+    void deleteSelected();
+    void renameSelected();
+    void newFile();
+    void newDirectory();
 
 private slots:
 
