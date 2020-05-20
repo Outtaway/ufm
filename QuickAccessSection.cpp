@@ -61,6 +61,12 @@ void QuickAccessSection::addItem(QString name, QString path)
     quick_items_.emplace(std::move(name), std::move(path));
 }
 
+void QuickAccessSection::deleteItem(QString name)
+{
+    if (!isStandartLocation_(name))
+        quick_items_.erase(name);
+}
+
 void QuickAccessSection::updateUi()
 {
     SectionBase::clearSection_();

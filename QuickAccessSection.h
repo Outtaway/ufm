@@ -26,11 +26,11 @@ private:
 
     void addItem(QString name, QString path) override;
 
+    void deleteItem(QString name) override;
+
     void updateUi() override;
 
     QString getPathByName(QString name) override;
-
-private:
 
     bool importQuickAccessFromDatabase_();
     bool exportQuickAccessToDatabase_();

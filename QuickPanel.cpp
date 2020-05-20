@@ -1,6 +1,7 @@
 #include "QuickPanel.h"
 
 #include <QTreeWidget>
+#include <QDebug>
 
 QuickPanel::QuickPanel(QTreeWidget* tree_view) :
     quick_panel_widget_(tree_view)
@@ -31,6 +32,27 @@ void QuickPanel::addItemToSection(QString section, QString name, QString path)
     sections_[section]->updateUi();
 }
 
+void QuickPanel::deleteItemFromSection(QString section, QString name)
+{
+    if (!sectionExists(section))
+        return;
+
+    sections_[section]->deleteItem(name);
+    sections_[section]->updateUi();
+}
+
+void QuickPanel::clearSelection()
+{
+    quick_panel_widget_->clearSelection();
+}
+
+QString QuickPanel::getSelected()
+{
+    QString item_name = quick_panel_widget_->currentItem()->text(0);
+
+    return item_name;
+}
+
 QString QuickPanel::getPathByName(QString section, QString name)
 {
     return sections_[section]->getPathByName(name);
@@ -39,4 +61,11 @@ QString QuickPanel::getPathByName(QString section, QString name)
 bool QuickPanel::sectionExists(QString section)
 {
     return sections_.find(section) != sections_.end();
+}
+
+bool QuickPanel::isSection(QTreeWidgetItem* item_to_check, QString section)
+{
+    if (item_to_check == nullptr)
+        return false;
+    return item_to_check->text(0) == section;
 }

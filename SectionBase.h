@@ -16,6 +16,8 @@ public:
 
     virtual void addItem(QString name, QString path) = 0;
 
+    virtual void deleteItem(QString name) = 0;
+
     virtual void setup();
 
     virtual void updateUi() = 0;

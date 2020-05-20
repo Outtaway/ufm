@@ -18,5 +18,6 @@
         <file>resources/music.png</file>
         <file>resources/pictures.png</file>
         <file>resources/movies.png</file>
+        <file>resources/unpin.png</file>
     </qresource>
 </RCC>

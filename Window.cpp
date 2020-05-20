@@ -40,6 +40,9 @@ Window::Window(QWidget* parent) :
         this, &Window::dir_selection_changed);
 
     QObject::connect(ui->dir_content, &QTreeView::customContextMenuRequested, this, &Window::on_dir_content_custom_menu);
+
+    QObject::connect(ui->quick_panel, &QTreeWidget::currentItemChanged,
+        this, &Window::quick_panel_selection_changed);
 }
 
 Window::~Window()
@@ -72,6 +75,18 @@ void Window::dir_selection_changed(const QItemSelection& selected, const QItemSe
         ui->move_button->setEnabled(false);
         ui->copy_button->setEnabled(false);
         ui->forward->setEnabled(false);
+    }
+}
+
+void Window::quick_panel_selection_changed(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    if (quick_panel_->isSection(current->parent(), QuickPanel::QUICK_ACCESS_SECTION))
+    {
+        ui->unpin_button->setEnabled(true);
+    }
+    else
+    {
+        ui->unpin_button->setEnabled(false);
     }
 }
 
@@ -168,4 +183,12 @@ void Window::on_pin_button_clicked()
     quick_panel_->addItemToSection(QuickPanel::QUICK_ACCESS_SECTION, name, path);
 
     content_->clearSelection();
+}
+
+void Window::on_unpin_button_clicked()
+{
+    QString selected_item_name = quick_panel_->getSelected();
+
+    quick_panel_->deleteItemFromSection(QuickPanel::QUICK_ACCESS_SECTION, selected_item_name);
+    quick_panel_->clearSelection();
 }

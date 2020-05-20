@@ -38,6 +38,8 @@ private slots:
 
     void dir_selection_changed(const QItemSelection& prev, const QItemSelection& next);
 
+    void quick_panel_selection_changed(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
     void on_dir_content_doubleClicked(const QModelIndex& index);
 
     void on_dir_content_custom_menu(const QPoint& point);
@@ -53,6 +55,8 @@ private slots:
     void onExit();
 
     void on_pin_button_clicked();
+
+    void on_unpin_button_clicked();
 
 private:
 

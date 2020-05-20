@@ -59,6 +59,12 @@ void RecentSection::addItem(QString name, QString path)
     }
 }
 
+void RecentSection::deleteItem(QString name)
+{
+    recent_locations_.erase(recent_mapping_.at(name));
+    recent_mapping_.erase(name);
+}
+
 void RecentSection::updateUi()
 {
     SectionBase::clearSection_();
