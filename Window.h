@@ -18,7 +18,6 @@
 #include "ContentContextMenu.h"
 #include "PathLine.h"
 #include "QuickPanel.h"
-#include "MenuBar.h"
 #include "SettingsButton.h"
 
 QT_BEGIN_NAMESPACE
@@ -65,7 +64,6 @@ private:
     ContentContextMenu* content_context_menu_;
 
     QHBoxLayout* layout_;
-    MenuBar* menu_bar_;
     SettingsButton* settings_button_;
 
     std::shared_ptr<Content>            content_;

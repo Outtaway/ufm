@@ -27,12 +27,7 @@ Window::Window(QWidget* parent) :
 
     settings_button_ = new SettingsButton(this);
 
-    menu_bar_ = new MenuBar(this);
-
-    layout_= new QHBoxLayout(this);
-    layout_->addWidget(menu_bar_);
-    layout_->addWidget(settings_button_);
-    static_cast<QVBoxLayout*>(this->layout())->insertLayout(0, layout_);
+    static_cast<QVBoxLayout*>(this->layout())->insertWidget(0, settings_button_);
 
     QObject::connect(QApplication::instance(), &QApplication::aboutToQuit,
                      this, &Window::onExit);
