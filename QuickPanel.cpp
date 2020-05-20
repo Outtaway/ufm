@@ -6,10 +6,10 @@
 QuickPanel::QuickPanel(QTreeWidget* tree_view) :
     quick_panel_widget_(tree_view)
 {
-    setup();
+    setup_();
 }
 
-void QuickPanel::setup()
+void QuickPanel::setup_()
 {
     QTreeWidgetItem* quick_access = addSection_(quick_panel_widget_);
     sections_[QUICK_ACCESS_SECTION] = std::make_unique<QuickAccessSection>(quick_access, QUICK_ACCESS_SECTION);

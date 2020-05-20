@@ -17,15 +17,7 @@ class Content : public QObject
     Q_OBJECT
 public:
 
-	Content(QTreeView* ui_tree_view, QString initial_directory = "");
-
-private:
-
-	void setup();
-
-	void setupFilesystem();
-
-public:
+    Content(QTreeView* ui_tree_view, QString initial_directory = "");
 
     enum COLUMNS
     {
@@ -35,42 +27,46 @@ public:
         LAST_MODIFIED
     };
 
-	void tryExecute(const QModelIndex& index);
+    void tryExecute(const QModelIndex& index);
 
-	void setCurrentDirectory(const QModelIndex& index);
+    void setCurrentDirectory(const QModelIndex& index);
 
-	void setCurrentDirectoryString(const QString& dir);
+    void setCurrentDirectoryString(const QString& dir);
 
-	QModelIndex getCurrentDirectory();
+    QModelIndex getCurrentDirectory();
 
     QModelIndex getIndexAtPoint(const QPoint& point);
 
-	QString getCurrentDirectoryName();
+    QString getCurrentDirectoryName();
 
-	QString getCurrentDirectoryFullPath();
+    QString getCurrentDirectoryFullPath();
 
-	QModelIndex getSelectedItem();
+    QModelIndex getSelectedItem();
 
     bool currentIsRoot();
 
-	void clearSelection();
+    void clearSelection();
 
-	bool isDirectory(const QModelIndex& index);
+    bool isDirectory(const QModelIndex& index);
 
-	bool goOneDirectoryBack();
+    bool goOneDirectoryBack();
 
-	bool goOneDirectoryForward();
+    bool goOneDirectoryForward();
 
-	PathChain composeCurrentDirPathChain();
+    PathChain composeCurrentDirPathChain();
 
     QString getSelectedName();
 
     QString getSelectedPath();
 
 public slots:
+
     void deleteSelected();
+
     void renameSelected();
+
     void newFile();
+
     void newDirectory();
 
 private slots:
@@ -79,9 +75,13 @@ private slots:
 
 private:
 
-    void deleteByIndex(QModelIndex to_delete);
+    void setup_();
 
-	QString								initial_directory_;
-	QTreeView*							content_tree_view_;
-	std::unique_ptr<QFileSystemModel>	file_system_model_;
+    void setupFilesystem_();
+
+    void deleteByIndex_(QModelIndex to_delete);
+
+    QString                             initial_directory_;
+    QTreeView*                          content_tree_view_;
+    std::unique_ptr<QFileSystemModel>   file_system_model_;
 };

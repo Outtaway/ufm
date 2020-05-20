@@ -12,6 +12,7 @@ class QSqlDatabase;
 
 class RecentSection : public SectionBase
 {
+
 public:
 
     RecentSection(QTreeWidgetItem* section, QString name);

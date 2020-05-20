@@ -11,33 +11,33 @@ class PathLine
 {
 public:
 
-	PathLine(QListWidget* path_line_list);
+    PathLine(QListWidget* path_line_list);
 
-	void setPathChain(PathChain new_path_chain);
+    void setPathChain(PathChain new_path_chain);
 
-	void pushBack(QModelIndex dir_index, QString dir_name);
+    void pushBack(QModelIndex dir_index, QString dir_name);
 
-	void popBack();
+    void popBack();
 
-	int selectedDirectoryPos();
+    int selectedDirectoryPos();
 
-	void clearSelection();
+    void clearSelection();
 
-	QModelIndex directoryIndexAt(size_t pos);
+    QModelIndex directoryIndexAt(size_t pos);
 
-	QString directoryNameAt(size_t pos);
+    QString directoryNameAt(size_t pos);
 
-	size_t size();
+    size_t size();
 
-	void erase(size_t offset, size_t count);
+    void erase(size_t offset, size_t count);
 
 private:
 
-	void updateUi();
+    void updateUi_();
 
-	const QString	path_line_prefix = " 🠚 ";
+    const QString	path_line_prefix = " 🠚 ";
 
-	QListWidget*	path_line_list_;
-	PathChain		path_chain_;
+    QListWidget*	path_line_list_;
+    PathChain		path_chain_;
 
 };

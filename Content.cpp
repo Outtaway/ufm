@@ -10,12 +10,12 @@ Content::Content(QTreeView* ui_tree_view, QString initial_directory) :
     initial_directory_(initial_directory),
 	content_tree_view_(ui_tree_view)
 {
-    setup();
+    setup_();
 }
 
-void Content::setup()
+void Content::setup_()
 {
-    setupFilesystem();
+    setupFilesystem_();
 
     // set up initial directory
     content_tree_view_->setRootIndex(file_system_model_->index(initial_directory_));
@@ -59,7 +59,7 @@ void Content::setup()
     qDebug() << content_tree_view_->selectionMode();
 }
 
-void Content::setupFilesystem()
+void Content::setupFilesystem_()
 {
     file_system_model_ = std::make_unique<QFileSystemModel>();
     file_system_model_->setRootPath(initial_directory_);
@@ -179,12 +179,12 @@ void Content::deleteSelected()
             approve_box.setDefaultButton(QMessageBox::Cancel);
             if (approve_box.exec() == QMessageBox::Ok)
             {
-                deleteByIndex(to_delete);
+                deleteByIndex_(to_delete);
             }
         }
         else
         {
-            deleteByIndex(to_delete);
+            deleteByIndex_(to_delete);
         }
     }
 }
@@ -273,7 +273,7 @@ void Content::settingsChanged(const Settings::OPTIONS option, const QVariant val
     }
 }
 
-void Content::deleteByIndex(QModelIndex to_delete)
+void Content::deleteByIndex_(QModelIndex to_delete)
 {
     bool result = file_system_model_->remove(to_delete);
     qDebug() << "Deleting" << file_system_model_->fileName(to_delete) << "..." << (result ? "Success" : "Fail");

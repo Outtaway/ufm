@@ -15,10 +15,6 @@ public:
 
     QuickPanel(QTreeWidget* tree_view);
 
-private:
-
-    void setup();
-
 public:
 
     void addItemToSection(QString section, QString name, QString path);
@@ -40,6 +36,8 @@ public:
     static constexpr const char* const RECENT_SECTION = "Recent";
 
 private:
+
+    void setup_();
 
     QTreeWidgetItem* addSection_(QTreeWidget* parent);
 

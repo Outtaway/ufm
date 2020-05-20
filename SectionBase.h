@@ -6,6 +6,7 @@ class QTreeWidgetItem;
 
 class SectionBase
 {
+
 public:
 
     SectionBase(QTreeWidgetItem* section, QString tab_name);

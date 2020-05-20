@@ -6,6 +6,7 @@
 
 class PathChain
 {
+
 public:
 
     PathChain() = default;

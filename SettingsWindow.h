@@ -26,6 +26,7 @@ private slots:
     void on_show_types_check_stateChanged(int);
 
 private:
+
     Ui::SettingsWindow *ui;
 };
 

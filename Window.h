@@ -31,6 +31,7 @@ class Window : public QWidget
 public:
 
     Window(QWidget *parent = nullptr);
+
     ~Window();
 
 private slots:
@@ -62,8 +63,6 @@ private:
     Ui::Window*                         ui;
 
     ContentContextMenu* content_context_menu_;
-
-    QHBoxLayout* layout_;
     SettingsButton* settings_button_;
 
     std::shared_ptr<Content>            content_;
