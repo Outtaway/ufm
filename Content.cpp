@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QFileDialog>
 
 Content::Content(QTreeView* ui_tree_view, QString initial_directory) :
     initial_directory_(initial_directory),
@@ -187,6 +188,7 @@ void Content::deleteSelected()
             deleteByIndex_(to_delete);
         }
     }
+    clearSelection();
 }
 
 void Content::renameSelected()
@@ -198,6 +200,7 @@ void Content::renameSelected()
     {
         content_tree_view_->edit(to_rename);
     }
+    clearSelection();
 }
 
 void Content::newFile()
@@ -240,6 +243,59 @@ void Content::newDirectory()
     qDebug() << "Creation of new directory acquired, new directory name: " << new_folder_name;
     QModelIndex new_directory = file_system_model_->mkdir(getCurrentDirectory(), new_folder_name);
     content_tree_view_->edit(new_directory);
+}
+
+void Content::moveSelectedTo()
+{
+    if (currentIsRoot())
+        return;
+    QFileDialog file_dialog;
+    file_dialog.setFileMode(QFileDialog::Directory);
+    file_dialog.setOption(QFileDialog::ShowDirsOnly);
+    QString new_location = file_dialog.getExistingDirectory(nullptr, "Select folder to move to", file_system_model_->filePath(getCurrentDirectory()));
+    if (new_location == "")
+    {
+        qDebug() << "New location was not selected";
+        return;
+    }
+    QString old_path = file_system_model_->filePath(getSelectedItem());
+    QString new_path = QDir::cleanPath(new_location + "/" + getSelectedName());
+    qDebug() << "old path of moved item: " << old_path;
+    qDebug() << "new path of moved item: " << new_path;
+    QDir dir;
+    if (!dir.rename(old_path, new_path))
+    {
+        qDebug() << "couldn't move item";
+        return;
+    }
+    clearSelection();
+}
+
+void Content::copySelectedTo()
+{
+    // TODO: make available copy of directory
+    // TODO: make available copy in the same directory
+    if (currentIsRoot())
+        return;
+    QFileDialog file_dialog;
+    file_dialog.setFileMode(QFileDialog::Directory);
+    file_dialog.setOption(QFileDialog::ShowDirsOnly);
+    QString new_location = file_dialog.getExistingDirectory(nullptr, "Select folder to copy to", file_system_model_->filePath(getCurrentDirectory()));
+    if (new_location == "")
+    {
+        qDebug() << "New location was not selected";
+        return;
+    }
+    QString old_path = file_system_model_->filePath(getSelectedItem());
+    QString new_path = QDir::cleanPath(new_location + "/" + getSelectedName());
+    qDebug() << "old path of copied item: " << old_path;
+    qDebug() << "new path of copied item: " << new_path;
+    if (!QFile::copy(old_path, new_path))
+    {
+        qDebug() << "couldn't copy item";
+        return;
+    }
+    clearSelection();
 }
 
 QString Content::getSelectedName()

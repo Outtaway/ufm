@@ -52,6 +52,12 @@ Window::Window(QWidget* parent) :
 
     QObject::connect(ui->new_file_button, &QPushButton::clicked,
                      &(*content_), &Content::newFile);
+
+    QObject::connect(ui->move_button, &QPushButton::clicked,
+                     &(*content_), &Content::moveSelectedTo);
+
+    QObject::connect(ui->copy_button, &QPushButton::clicked,
+                     &(*content_), &Content::copySelectedTo);
 }
 
 Window::~Window()

@@ -69,6 +69,10 @@ public slots:
 
     void newDirectory();
 
+    void moveSelectedTo();
+
+    void copySelectedTo();
+
 private slots:
 
     void settingsChanged(const Settings::OPTIONS option, const QVariant value);
