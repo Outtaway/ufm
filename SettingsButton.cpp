@@ -20,6 +20,7 @@ SettingsButton::SettingsButton(QWidget* parent) :
 void SettingsButton::settingsInvoked()
 {
     SettingsWindow* settings_window = new SettingsWindow;
+    settings_window->setWindowModality(Qt::ApplicationModal);
     settings_window->setWindowTitle("UFM Settings");
     settings_window->setAttribute(Qt::WA_DeleteOnClose);
     settings_window->show();
