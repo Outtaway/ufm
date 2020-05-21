@@ -202,19 +202,22 @@ void Content::renameSelected()
 
 void Content::newFile()
 {
+    // TODO: fix file is not created when user is on drive
     if (currentIsRoot())
         return;
     QString new_file_name = QInputDialog::getText(nullptr, "UFM", "Enter name of new file: ");
     QString current_directory_path = file_system_model_->filePath(getCurrentDirectory());
-    QFileInfo info(current_directory_path + "/" + new_file_name);
+    QString new_file_path = QDir::cleanPath(current_directory_path + "/" + new_file_name);
+    qDebug() << "new file path: " << new_file_path;
+    QFileInfo info(new_file_path);
     if (info.exists())
     {
         QMessageBox messageBox;
         messageBox.critical(0, "UFM", "File with such name exists!");
         return;
     }
-    QFile file(current_directory_path + "/" + new_file_name);
-    file.open(QIODevice::WriteOnly);
+    QFile file(new_file_path);
+    file.open(QFile::WriteOnly);
     file.write("");
 }
 
@@ -227,7 +230,7 @@ void Content::newDirectory()
     QString current_directory_path = file_system_model_->filePath(getCurrentDirectory());
     for (size_t i = 1;;++i)
     {
-        QFileInfo info(current_directory_path + "/" + new_folder_base_name + QString::number(i));
+        QFileInfo info(QDir::cleanPath(current_directory_path + "/" + new_folder_base_name + QString::number(i)));
         if (!info.exists())
         {
             new_folder_name = new_folder_base_name + QString::number(i);
