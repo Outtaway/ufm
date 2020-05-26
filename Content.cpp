@@ -200,7 +200,6 @@ void Content::renameSelected()
     {
         content_tree_view_->edit(to_rename);
     }
-    clearSelection();
 }
 
 void Content::newFile()
